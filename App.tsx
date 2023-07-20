@@ -1,21 +1,16 @@
 
 import React from 'react';
-// import { LoginScreen } from "./screens/LoginScreen";
-// import { HomeScreen } from "./screens/HomeScreen";
-// import { DetailScreen } from "./screens/DetailScreen";
+import { NavigationContainer } from '@react-navigation/native';
+import BottomTabNavigator from './screens/BottomTabNavigator';
 import {
   StyleSheet,
-  Text,
-  View,
-  Button,
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 export default function App() {
   return (
-   <View>
-      <Text>1234</Text>
-   </View>
+    <NavigationContainer>
+      <BottomTabNavigator />
+    </NavigationContainer>
   );
 }
 
