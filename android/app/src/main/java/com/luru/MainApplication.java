@@ -1,4 +1,4 @@
-package com.addemo;
+package com.luru;
 
 import android.app.Application;
 
