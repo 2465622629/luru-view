@@ -1,108 +1,92 @@
-// 账户信息
+import React, { Component } from 'react';
+import {
+  ImageBackground,
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+} from 'react-native';
 
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-
-const AccountInfoScreen = () => {
-  // 假设用户信息
-  const userInfo = {
-    username: 'John Doe',
-    avatar: require('./path/to/your/user-avatar.png'),
-    phoneNumber: '123-456-7890',
-    paymentInfo: '**** **** **** 1234', // 假设显示最后四位
-  };
-
-  const handleLogout = () => {
-    // 在此处实现注销账号逻辑
-    // 可以清除用户信息、跳转到登录页等
-    console.log('Logout');
-  };
-
+const App = () => {
   return (
-    <View style={styles.container}>
-      {/* 头像 */}
-      <Image source={userInfo.avatar} style={styles.avatar} />
-
-      {/* 用户名 */}
-      <Text style={styles.username}>{userInfo.username}</Text>
-
-      {/* 账号安全 */}
-      <TouchableOpacity style={styles.accountSecurityButton}>
-        <Text style={styles.buttonText}>账号安全</Text>
-      </TouchableOpacity>
-
-      {/* 手机号 */}
-      <Text style={styles.accountInfoText}>手机号：{userInfo.phoneNumber}</Text>
-
-      {/* 支付信息 */}
-      <Text style={styles.accountInfoText}>支付信息：{userInfo.paymentInfo}</Text>
-
-      {/* 修改密码 */}
-      <TouchableOpacity style={styles.changePasswordButton}>
-        <Text style={styles.buttonText}>修改密码</Text>
-      </TouchableOpacity>
-
-      {/* 注销账号 */}
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.buttonText}>注销账号</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView style={styles.container}>
+        <View style={styles.content}>
+          <Text style={styles.title}>Settings</Text>
+          <View style={styles.accountInfo}>
+            <Text style={styles.accountInfoTitle}>Account Information</Text>
+            <Text style={styles.accountInfoText}>
+              Name: 珍惜
+              Avatar:
+            </Text>
+          </View>
+          <View style={styles.securityInfo}>
+            <Text style={styles.securityInfoTitle}>Security Information</Text>
+            <Text style={styles.securityInfoText}>
+              Phone Number: 185****7368
+              Payment Information: 198****2090
+            </Text>
+          </View>
+          <View style={styles.actionButtons}>
+            <Text style={styles.actionButtonText}>Change Password</Text>
+            <Text style={styles.actionButtonText}>Delete Account</Text>
+          </View>
+        </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
   },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 20,
+  content: {
+    padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
   },
-  username: {
-    fontSize: 24,
+  title: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
+    color: '#333',
   },
-  accountSecurityButton: {
-    width: '80%',
-    height: 50,
-    backgroundColor: 'blue',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    marginBottom: 10,
+  accountInfo: {
+    padding: 10,
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
+  },
+  accountInfoTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
   },
   accountInfoText: {
-    fontSize: 18,
-    marginBottom: 10,
+    fontSize: 14,
+    color: '#333',
   },
-  changePasswordButton: {
-    width: '80%',
-    height: 50,
-    backgroundColor: 'green',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    marginBottom: 10,
+  securityInfo: {
+    padding: 10,
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
   },
-  logoutButton: {
-    width: '80%',
-    height: 50,
-    backgroundColor: 'red',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
+  securityInfoTitle: {
+    fontSize: 16,
     fontWeight: 'bold',
+    color: '#333',
+  },
+  securityInfoText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  actionButtons: {
+    padding: 10,
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
+  },
+  actionButtonText: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
   },
 });
 
-export default AccountInfoScreen;
+export default App;

@@ -13,7 +13,7 @@ const PunchScreen = () => {
     <View style={styles.container}>
       {/* 用户头像 */}
       <TouchableOpacity style={styles.avatarContainer}>
-        <Image source={require('./path/to/your/user-avatar.png')} style={styles.avatar} />
+        <Image source={require('../assets/icon.png')} style={styles.avatar} />
       </TouchableOpacity>
 
       {/* 打卡按钮 */}

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useState} from "react";
 import {
     View,
     Text,
@@ -10,10 +10,10 @@ import {
     ScrollView, Dimensions
 } from "react-native";
 
-const orangeBackground = require("../../assets/bgImg.jpg");
-const userAvatar = require("../../assets/Binx_Bond.svg");
-import axiosInstance from "../../util/comreqtool";
-import * as SecureStore from "expo-secure-store";
+const orangeBackground = require("../assets/bgImg.jpg");
+const userAvatar = require("../assets/Binx_Bond.svg");
+import axiosInstance from "../utils/comreqtool";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useNavigation} from "@react-navigation/native";
 
 export default function DetailsScreen() {
@@ -36,7 +36,7 @@ export default function DetailsScreen() {
 
     const getUserInfo = async () => {
         try {
-            const token = await SecureStore.getItemAsync('userId');
+            const token = await AsyncStorage.getItem('userId');
             console.log('获取到用户id:', token);
 
             const formData = new FormData();
