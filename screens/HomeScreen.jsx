@@ -9,10 +9,9 @@ import {
     Animated,
     RefreshControl, ScrollView
 } from "react-native";
-import axiosInstance from "../../util/comreqtool";
-import animatedStyle from "react-native-web/src/vendor/react-native/Animated/nodes/AnimatedStyle";
+import axiosInstance from "../utils/comreqtool";
 import {useNavigation} from '@react-navigation/native';
-import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const commonStyles = StyleSheet.create({
     container: {
@@ -141,7 +140,7 @@ export default function HomeScreen() {
     }
     const getUserInfo = async () => {
         try {
-            const token = await SecureStore.getItemAsync('userId');
+            const token = await AsyncStorage.getItem('userId');
             const formData = new FormData();
             formData.append('userId', token);
 
@@ -155,7 +154,7 @@ export default function HomeScreen() {
     };
     const handlePressIn = () => {
         Animated.spring(animation, {
-            toValue: 0.8,
+            toValue: 0.5,
             useNativeDriver: true,
         }).start();
     };
@@ -198,7 +197,7 @@ export default function HomeScreen() {
                     activeOpacity={0.6}
                     onPress={checkCaptcha}
                 >
-                    <Animated.View style={[commonStyles.button, animatedStyle]}>
+                    <Animated.View style={[commonStyles.button, { transform: [{ scale: animation }] }]}>
                         <Text style={commonStyles.buttonText}>验证</Text>
                     </Animated.View>
                 </TouchableOpacity>
@@ -249,3 +248,4 @@ export default function HomeScreen() {
         </ScrollView>
     );
 }
+

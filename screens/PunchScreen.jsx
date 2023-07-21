@@ -1,7 +1,7 @@
 // PunchScreen.js
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground } from 'react-native';
 
 const PunchScreen = () => {
   const handlePunch = () => {
@@ -10,29 +10,38 @@ const PunchScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* 用户头像 */}
-      <TouchableOpacity style={styles.avatarContainer}>
-        <Image source={require('../assets/icon.png')} style={styles.avatar} />
-      </TouchableOpacity>
+    <ImageBackground
+      source={require('../assets/bgImg.jpg')}
+      style={styles.backgroundImage}
+    >
+      <View style={styles.container}>
+        {/* 用户头像 */}
+        <TouchableOpacity style={styles.avatarContainer}>
+          <Image source={require('../assets/icon.png')} style={styles.avatar} />
+        </TouchableOpacity>
 
-      {/* 打卡按钮 */}
-      <TouchableOpacity style={styles.punchButton} onPress={handlePunch}>
-        <Text style={styles.buttonText}>打卡</Text>
-      </TouchableOpacity>
+        {/* 打卡按钮 */}
+        <TouchableOpacity style={styles.punchButton} onPress={handlePunch}>
+          <Text style={styles.buttonText}>打卡</Text>
+        </TouchableOpacity>
 
-      {/* 打卡规则介绍 */}
-      <View style={styles.ruleContainer}>
-        <Text style={styles.ruleText}>打卡规则介绍：</Text>
-        <Text style={styles.ruleDescription}>
-          在此处描述打卡的相关规则和内容，例如打卡时间、打卡地点等。
-        </Text>
+        {/* 打卡规则介绍 */}
+        <View style={styles.ruleContainer}>
+          <Text style={styles.ruleText}>打卡规则介绍：</Text>
+          <Text style={styles.ruleDescription}>
+            在此处描述打卡的相关规则和内容，例如打卡时间、打卡地点等。
+          </Text>
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', // Make sure the image covers the entire screen
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
