@@ -1,12 +1,57 @@
-// PunchScreen.js
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground, ScrollView, RefreshControl } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Assuming you have installed the required package
+import axiosInstance from "../utils/comreqtool";
+export default function PunchScreen() {
+  const [pageData, setPageData] = useState({
+    userData: {},
+  });
 
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground } from 'react-native';
+  const [refreshing, setRefreshing] = useState(false); // State variable for controlling the refresh
 
-const PunchScreen = () => {
-  const handlePunch = () => {
-    // 在此处实现打卡逻辑
-    // 可以调用 API 来处理打卡操作
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
+  const getUserInfo = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userId');
+      const formData = new FormData();
+      formData.append('userId', token);
+
+      const { data } = await axiosInstance.post('/user/getUserInfo', formData);
+      setPageData({userData: data.data });
+      console.log(pageData.userData);
+    } catch (error) {
+      console.log(error.message);
+      alert(error.message);
+      navigation.navigate('Login');
+    }
+  };
+
+  const handlePunch = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userId');
+      const formData = new FormData();
+      formData.append('id', token);
+      const { data } = await axiosInstance.post('/user/clockIn', formData);
+      alert(data.message);
+      getUserInfo();
+    }
+    catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true); // Set the refreshing state to true
+    try {
+      // Fetch the updated user info
+      await getUserInfo();
+    } catch (error) {
+      console.log(error.message);
+    }
+    setRefreshing(false); // Set the refreshing state back to false after fetching the data
   };
 
   return (
@@ -14,10 +59,18 @@ const PunchScreen = () => {
       source={require('../assets/bgImg.jpg')}
       style={styles.backgroundImage}
     >
-      <View style={styles.container}>
-        {/* 用户头像 */}
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
         <TouchableOpacity style={styles.avatarContainer}>
           <Image source={require('../assets/icon.png')} style={styles.avatar} />
+          <Text> {pageData.userData.integral}积分 </Text>
         </TouchableOpacity>
 
         {/* 打卡按钮 */}
@@ -27,15 +80,18 @@ const PunchScreen = () => {
 
         {/* 打卡规则介绍 */}
         <View style={styles.ruleContainer}>
-          <Text style={styles.ruleText}>打卡规则介绍：</Text>
+          <Text style={styles.ruleText}>打卡规则：</Text>
           <Text style={styles.ruleDescription}>
-            在此处描述打卡的相关规则和内容，例如打卡时间、打卡地点等。
+            早起打卡，每天好心情
+          </Text>
+          <Text style={styles.ruleDescription}>
+            严禁使用脚本，违规者封号，不解释
           </Text>
         </View>
-      </View>
+      </ScrollView>
     </ImageBackground>
   );
-};
+}
 
 const styles = StyleSheet.create({
   backgroundImage: {
@@ -56,6 +112,9 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 30,
     elevation: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatar: {
     width: 30,
@@ -66,7 +125,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 75,
-    backgroundColor: 'blue',
+    backgroundColor: '#fc5b67',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -89,5 +148,3 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
 });
-
-export default PunchScreen;
