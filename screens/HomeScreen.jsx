@@ -14,7 +14,6 @@ import { NativeAppEventEmitter, NativeModules } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
 const commonStyles = StyleSheet.create({
     container: {
         flex: 1,
@@ -178,8 +177,8 @@ export default function HomeScreen() {
                 break;
             case 'onSuccess':
                 console.log('初始化成功');
-                // NativeModules.AdUtilsModule.initRewardAd(REWARD_POS_ID);
-                // NativeModules.AdUtilsModule.initInsertAd(INSERT_POS_ID);
+                NativeModules.AdUtilsModule.initRewardAd(REWARD_POS_ID);
+                NativeModules.AdUtilsModule.initInsertAd(INSERT_POS_ID);
                 break;
         }
     });
@@ -273,7 +272,7 @@ export default function HomeScreen() {
             setUserData(data.data);
         } catch (error) {
             console.log(error.message);
-            alert(error.message);
+            alert('未获取到登录信息，请重新登录');
             navigation.navigate('Login');
         }
     };
