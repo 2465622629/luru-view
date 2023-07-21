@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     Text,
     TextInput,
@@ -10,7 +10,8 @@ import {
     RefreshControl, ScrollView
 } from "react-native";
 import axiosInstance from "../utils/comreqtool";
-import {useNavigation} from '@react-navigation/native';
+import { NativeAppEventEmitter, NativeModules } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const commonStyles = StyleSheet.create({
@@ -94,10 +95,18 @@ export default function HomeScreen() {
     const [animation] = useState(new Animated.Value(1));
     const [refreshing, setRefreshing] = useState(false);
     const navigation = useNavigation();
+
+    const APP_KEY = 'E6097975B89E83D6';
+    const REWARD_POS_ID = '09A177D681D6FB81241C3DCE963DCB46';
+    const INSERT_POS_ID = '1D273967F51868AF2C4E080D496D06D0';
+
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         initData()
         setRefreshing(false);
+    }, []);
+    useEffect(() => {
+        // initAd()
     }, []);
     const getCaptcha = async () => {
         try {
@@ -115,6 +124,72 @@ export default function HomeScreen() {
             console.log(e.message)
         }
     }
+    //初始化广告
+    // NativeAppEventEmitter.addListener('initResult', info => {
+    //     switch (info.callBackName) {
+    //         case 'onError':
+    //             console.log('初始化错误' + info.errorMsg);
+    //             break;
+    //         case 'onSuccess':
+    //             console.log('初始化成功');
+    //             // NativeModules.AdUtilsModule.initRewardAd(REWARD_POS_ID);
+    //             // NativeModules.AdUtilsModule.initInsertAd(INSERT_POS_ID);
+    //             break;
+    //     }
+    // });
+    // //激励广告 激励结果
+    // NativeAppEventEmitter.addListener('rewardResult', info => {
+    //     switch (info.callBackName) {
+    //         case 'onClick':
+    //             console.log('onClick');
+    //             break;
+    //         case 'onClose':
+    //             console.log('onClose adId=' + info.adId);
+    //             console.log("未观看成功，不奖励金币");
+    //             break;
+    //         case 'onReward':
+    //             console.log('onReward adId=' + info.adId);
+    //             console.log("成功观看视频，奖励10金币");
+    //             break;
+    //         case 'onShow':
+    //             console.log('onShow adId=' + info.adId);
+    //             break;
+    //         case 'onVideoEnd':
+    //             console.log('onVideoEnd adId=' + info.adId);
+    //             break;
+    //         case 'onVideoStart':
+    //             console.log('onVideoStart');
+    //             break;
+    //         case 'onError':
+    //             console.log(
+    //                 'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
+    //             );
+    //             break;
+    //     }
+    // });
+    // //插入结果
+    // NativeAppEventEmitter.addListener('insertResult', info => {
+    //     switch (info.callBackName) {
+    //         case 'onClick':
+    //             console.log('onClick');
+    //             break;
+    //         case 'onClose':
+    //             console.log('onClose');
+    //             break;
+    //         case 'onShow':
+    //             console.log('onShow');
+    //             break;
+    //         case 'onError':
+    //             console.log(
+    //                 'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
+    //             );
+    //             break;
+    //     }
+    // });
+    // const initAd = () => {
+    //     NativeModules.AdUtilsModule.initAd(APP_KEY);
+    // };
+    //广告
     //校验验证码
     const checkCaptcha = async () => {
         try {
@@ -129,7 +204,6 @@ export default function HomeScreen() {
             dataForm.append('userId', 1);
             let data = await axiosInstance.post('/captcha/verifyCaptcha', dataForm)
             if (data.data.success) {
-
                 alert('恭喜，验证通过奖励10金币 刷新查看金币数量')
             } else {
                 alert('验证码错误，再试一下吧')
@@ -180,7 +254,7 @@ export default function HomeScreen() {
                 {/* 图片容器 */}
                 <TouchableOpacity style={commonStyles.capbox} onPress={getCaptcha}>
                     {/*插入图片*/}
-                    <Image source={{uri: 'data:image/jpeg;base64,' + captchaImg}} style={{width: 200, height: 100}}/>
+                    <Image source={{ uri: 'data:image/jpeg;base64,' + captchaImg }} style={{ width: 200, height: 100 }} />
                 </TouchableOpacity>
                 <View>
                     <TextInput
@@ -203,7 +277,7 @@ export default function HomeScreen() {
                 </TouchableOpacity>
 
                 <View style={commonStyles.cont_box}>
-                    <Text>{`当前积分:${userData.integral ===null ? 0 : userData.integral}`}</Text>
+                    <Text>{`当前积分:${userData.integral === null ? 0 : userData.integral}`}</Text>
                     <Text style={commonStyles.btn_txt}>立即兑换</Text>
                 </View>
 
@@ -212,8 +286,11 @@ export default function HomeScreen() {
                     <Text style={commonStyles.btn_txt}>兑换时间</Text>
                 </View>
                 <View style={commonStyles.cont_box}>
-                    <Text>{`观看视频(${userData.watchVideoCount ===null ? 0 : userData.watchVideoCount}/50次)`}</Text>
-                    <TouchableOpacity style={commonStyles.customButton}>
+                    <Text>{`观看视频(${userData.watchVideoCount === null ? 0 : userData.watchVideoCount}/50次)`}</Text>
+                    <TouchableOpacity
+                        style={commonStyles.customButton}
+                        onPress={ NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID)}
+                    >
                         <Text style={commonStyles.buttonText}>+1</Text>
                     </TouchableOpacity>
                 </View>
