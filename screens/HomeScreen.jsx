@@ -14,6 +14,7 @@ import { NativeAppEventEmitter, NativeModules } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
 const commonStyles = StyleSheet.create({
     container: {
         flex: 1,
@@ -104,14 +105,26 @@ export default function HomeScreen() {
         setRefreshing(true);
         initData()
         setRefreshing(false);
+        initAd()
     }, []);
     useEffect(() => {
-        // initAd()
-    }, []);
+        initData()
+    }, [])
     const getCaptcha = async () => {
         try {
             let data = await axiosInstance.get('/captcha/getCaptcha')
             setCaptchaImg(data.data.data)
+        } catch (e) {
+            alert(e.message)
+        }
+    }
+    // 添加观看广告次数
+    const addWatchVied = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userId');
+            let dataForm = new FormData();
+            dataForm.append('id', token);
+            let data = await axiosInstance.post('/user/watchVideo', dataForm)
         } catch (e) {
             alert(e.message)
         }
@@ -124,71 +137,109 @@ export default function HomeScreen() {
             console.log(e.message)
         }
     }
+    //将积分转化为余额
+    const integralToMoney = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userId');
+            let dataForm = new FormData();
+            dataForm.append('id', token);
+            let data = await axiosInstance.post('/user/exchange')
+            if (data.data.success) {
+                alert('兑换成功')
+                getUserInfo()
+            } else {
+                alert('兑换失败,积分不足')
+            }
+        } catch (e) {
+            alert(e.message)
+        }
+    }
+    //为用户增加积分
+    const addIntegral = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userId');
+            let dataForm = new FormData();
+            dataForm.append('id', token);
+            dataForm.append('integral', 10);
+            let data = await axiosInstance.post('/user/addIntegral', dataForm)
+            if (data.data.success) {
+                getUserInfo()
+            }
+        } catch (e) {
+            alert(e.message)
+        }
+    }
+
     //初始化广告
-    // NativeAppEventEmitter.addListener('initResult', info => {
-    //     switch (info.callBackName) {
-    //         case 'onError':
-    //             console.log('初始化错误' + info.errorMsg);
-    //             break;
-    //         case 'onSuccess':
-    //             console.log('初始化成功');
-    //             // NativeModules.AdUtilsModule.initRewardAd(REWARD_POS_ID);
-    //             // NativeModules.AdUtilsModule.initInsertAd(INSERT_POS_ID);
-    //             break;
-    //     }
-    // });
-    // //激励广告 激励结果
-    // NativeAppEventEmitter.addListener('rewardResult', info => {
-    //     switch (info.callBackName) {
-    //         case 'onClick':
-    //             console.log('onClick');
-    //             break;
-    //         case 'onClose':
-    //             console.log('onClose adId=' + info.adId);
-    //             console.log("未观看成功，不奖励金币");
-    //             break;
-    //         case 'onReward':
-    //             console.log('onReward adId=' + info.adId);
-    //             console.log("成功观看视频，奖励10金币");
-    //             break;
-    //         case 'onShow':
-    //             console.log('onShow adId=' + info.adId);
-    //             break;
-    //         case 'onVideoEnd':
-    //             console.log('onVideoEnd adId=' + info.adId);
-    //             break;
-    //         case 'onVideoStart':
-    //             console.log('onVideoStart');
-    //             break;
-    //         case 'onError':
-    //             console.log(
-    //                 'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
-    //             );
-    //             break;
-    //     }
-    // });
-    // //插入结果
-    // NativeAppEventEmitter.addListener('insertResult', info => {
-    //     switch (info.callBackName) {
-    //         case 'onClick':
-    //             console.log('onClick');
-    //             break;
-    //         case 'onClose':
-    //             console.log('onClose');
-    //             break;
-    //         case 'onShow':
-    //             console.log('onShow');
-    //             break;
-    //         case 'onError':
-    //             console.log(
-    //                 'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
-    //             );
-    //             break;
-    //     }
-    // });
-    // const initAd = () => {
-    //     NativeModules.AdUtilsModule.initAd(APP_KEY);
-    // };
+    NativeAppEventEmitter.addListener('initResult', info => {
+        switch (info.callBackName) {
+            case 'onError':
+                console.log('初始化错误' + info.errorMsg);
+                break;
+            case 'onSuccess':
+                console.log('初始化成功');
+                // NativeModules.AdUtilsModule.initRewardAd(REWARD_POS_ID);
+                // NativeModules.AdUtilsModule.initInsertAd(INSERT_POS_ID);
+                break;
+        }
+    });
+    //激励广告 激励结果
+    NativeAppEventEmitter.addListener('rewardResult', info => {
+        switch (info.callBackName) {
+            case 'onClick':
+                console.log('onClick');
+                break;
+            case 'onClose':
+                console.log('onClose adId=' + info.adId);
+                console.log("未观看成功，不奖励金币");
+                break;
+            case 'onReward':
+                console.log('onReward adId=' + info.adId);
+                addIntegral()
+                addWatchVied()
+                alert("完成任务,获得奖励");
+                break;
+            case 'onShow':
+                console.log('onShow adId=' + info.adId);
+                break;
+            case 'onVideoEnd':
+                console.log('onVideoEnd adId=' + info.adId);
+                break;
+            case 'onVideoStart':
+                console.log('onVideoStart');
+                break;
+            case 'onError':
+                console.log(
+                    'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
+                );
+                break;
+        }
+    });
+    //插入结果
+    NativeAppEventEmitter.addListener('insertResult', info => {
+        switch (info.callBackName) {
+          case 'onClick':
+            console.log('onClick');
+            break;
+          case 'onClose':
+            console.log('onClose');
+            break;
+          case 'onShow':
+            console.log('onShow');
+            break;
+          case 'onError':
+            console.log(
+              'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
+            );
+            break;
+        }
+      });
+    const initAd = () => {
+        NativeModules.AdUtilsModule.initAd(APP_KEY);
+    };
+    const showRewardAd = () => {
+        NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
+    };
     //广告
     //校验验证码
     const checkCaptcha = async () => {
@@ -278,8 +329,13 @@ export default function HomeScreen() {
 
                 <View style={commonStyles.cont_box}>
                     <Text>{`当前积分:${userData.integral === null ? 0 : userData.integral}`}</Text>
-                    <Text style={commonStyles.btn_txt}>立即兑换</Text>
+                    <TouchableOpacity 
+                    onPress={integralToMoney}
+                    >
+                        <Text style={commonStyles.btn_txt}>立即兑换</Text>
+                    </TouchableOpacity>
                 </View>
+
 
                 <View style={commonStyles.cont_box}>
                     <Text>{`当前金币:${userData.coins === null ? 0 : userData.coins}`}</Text>
@@ -289,7 +345,7 @@ export default function HomeScreen() {
                     <Text>{`观看视频(${userData.watchVideoCount === null ? 0 : userData.watchVideoCount}/50次)`}</Text>
                     <TouchableOpacity
                         style={commonStyles.customButton}
-                        onPress={ NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID)}
+                        onPress={showRewardAd}
                     >
                         <Text style={commonStyles.buttonText}>+1</Text>
                     </TouchableOpacity>

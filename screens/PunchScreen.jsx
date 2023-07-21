@@ -34,7 +34,7 @@ export default function PunchScreen() {
       const token = await AsyncStorage.getItem('userId');
       const formData = new FormData();
       formData.append('id', token);
-      const { data } = await axiosInstance.post('/user/clockIn', formData);
+      const { data } = await axiosInstance.post('/punchRecords/punch', formData);
       alert(data.message);
       getUserInfo();
     }
@@ -42,6 +42,7 @@ export default function PunchScreen() {
       console.log(error.message);
     }
   };
+  
 
   const onRefresh = async () => {
     setRefreshing(true); // Set the refreshing state to true
