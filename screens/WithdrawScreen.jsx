@@ -1,51 +1,29 @@
-// WithdrawScreen.js
-
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 
 const WithdrawScreen = () => {
-  const [withdrawMethod, setWithdrawMethod] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
-  const availableBalance = 5000; // 示例可提现额度为5000
+  const availableBalance = 1000; // 替换为实际可提现金额
 
   const handleWithdraw = () => {
-    // 在此处实现提现逻辑
-    // 可以根据用户选择的提现方式和输入的提现金额来处理提现操作
-    console.log('Withdraw Method:', withdrawMethod);
-    console.log('Withdraw Amount:', withdrawAmount);
+    // TODO: 处理提现逻辑
+    console.log('提现金额：', withdrawAmount);
+    alert('提现成功！');
   };
 
   return (
     <View style={styles.container}>
-      {/* 选择提现方式 */}
-      <TouchableOpacity
-        style={styles.withdrawMethodButton}
-        onPress={() => setWithdrawMethod('银行卡')}
-      >
-        <Text style={styles.buttonText}>选择提现方式：银行卡</Text>
-      </TouchableOpacity>
+      <Text style={styles.label}>可提现金额: {availableBalance} 元</Text>
 
-      <TouchableOpacity
-        style={styles.withdrawMethodButton}
-        onPress={() => setWithdrawMethod('支付宝')}
-      >
-        <Text style={styles.buttonText}>选择提现方式：支付宝</Text>
-      </TouchableOpacity>
-
-      {/* 输入提现金额 */}
       <TextInput
-        style={styles.amountInput}
+        style={styles.input}
         placeholder="输入提现金额"
         keyboardType="numeric"
         value={withdrawAmount}
-        onChangeText={text => setWithdrawAmount(text)}
+        onChangeText={setWithdrawAmount}
       />
 
-      {/* 显示可提现额度 */}
-      <Text style={styles.availableBalanceText}>可提现额度：{availableBalance}元</Text>
-
-      {/* 提现按钮 */}
-      <TouchableOpacity style={styles.withdrawButton} onPress={handleWithdraw}>
+      <TouchableOpacity style={styles.button} onPress={handleWithdraw}>
         <Text style={styles.buttonText}>提现</Text>
       </TouchableOpacity>
     </View>
@@ -55,40 +33,29 @@ const WithdrawScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
   },
-  withdrawMethodButton: {
-    width: '80%',
-    height: 50,
-    backgroundColor: 'blue',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    marginBottom: 10,
+  label: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
-  amountInput: {
-    width: '80%',
-    height: 50,
-    borderColor: 'gray',
+  input: {
+    width: '100%',
+    height: 40,
     borderWidth: 1,
-    borderRadius: 8,
-    fontSize: 18,
-    paddingHorizontal: 10,
-    marginBottom: 10,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 20,
   },
-  availableBalanceText: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  withdrawButton: {
-    width: '80%',
-    height: 50,
-    backgroundColor: 'green',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
+  button: {
+    backgroundColor: 'blue',
+    paddingVertical: 10, 
+    paddingHorizontal: 100, 
+    borderRadius: 20,
   },
   buttonText: {
     color: 'white',

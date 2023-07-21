@@ -16,7 +16,7 @@ const BottomTabNavigator = () => {
     <Tab.Navigator>
       <Tab.Screen name="广告" component={AdScreen} />
       <Tab.Screen name="我的" component={DetailsScreen} />
-      <Tab.Screen name="账户信息" component={AccountInfoScreen} />
+      <Tab.Screen name="账号信息" component={AccountInfoScreen} />
       <Tab.Screen name="打卡" component={PunchScreen} />
       <Tab.Screen name="提现" component={WithdrawScreen} />
     </Tab.Navigator>

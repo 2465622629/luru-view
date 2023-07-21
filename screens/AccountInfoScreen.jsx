@@ -11,24 +11,39 @@ const App = () => {
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.title}>Settings</Text>
           <View style={styles.accountInfo}>
-            <Text style={styles.accountInfoTitle}>Account Information</Text>
+            <Text style={styles.accountInfoTitle}>用户名</Text>
             <Text style={styles.accountInfoText}>
-              Name: 珍惜
-              Avatar:
+              珍惜
             </Text>
           </View>
-          <View style={styles.securityInfo}>
-            <Text style={styles.securityInfoTitle}>Security Information</Text>
-            <Text style={styles.securityInfoText}>
-              Phone Number: 185****7368
-              Payment Information: 198****2090
+
+          <View style={styles.accountInfo}>
+            <Text style={styles.accountInfoTitle}>头像</Text>
+            <Text style={styles.accountInfoText}>
+              珍惜
             </Text>
           </View>
-          <View style={styles.actionButtons}>
-            <Text style={styles.actionButtonText}>Change Password</Text>
-            <Text style={styles.actionButtonText}>Delete Account</Text>
+          <View style={styles.accountInfo}>
+            <Text style={styles.accountInfoTitle}>手机号</Text>
+            <Text style={styles.accountInfoText}>
+              1235123124
+            </Text>
+          </View>
+
+          <View style={styles.accountInfo}>
+            <Text style={styles.accountInfoTitle}>支付信息</Text>
+            <Text style={styles.accountInfoText}>
+              珍惜
+            </Text>
+          </View>
+
+          <View style={styles.accountInfo}>
+            <Text style={styles.accountInfoTitle}>修改密码</Text>
+          </View>
+
+          <View style={styles.accountInfo}>
+            <Text style={styles.accountInfoTitle}>注销账号</Text>
           </View>
         </View>
     </SafeAreaView>
@@ -50,9 +65,13 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   accountInfo: {
-    padding: 10,
+    padding: 15,
     borderBottomColor: '#ccc',
     borderBottomWidth: 1,
+    //让内容横向排列
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+
   },
   accountInfoTitle: {
     fontSize: 16,
