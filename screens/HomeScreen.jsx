@@ -254,7 +254,10 @@ export default function HomeScreen() {
             dataForm.append('userId', 1);
             let data = await axiosInstance.post('/captcha/verifyCaptcha', dataForm)
             if (data.data.success) {
-                alert('恭喜，验证通过奖励10积分 下拉刷新查看金币数量')
+                getUserInfo()
+                alert('恭喜,验证通过奖励1积分')
+                //获取验证码
+                getCaptcha()
             } else {
                 alert('验证码错误，再试一下吧')
             }

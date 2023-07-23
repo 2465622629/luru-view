@@ -1,184 +1,153 @@
-import React, {useCallback, useState} from "react";
-import {
-    View,
-    Text,
-    ImageBackground,
-    Image,
-    StyleSheet,
-    TouchableOpacity,
-    RefreshControl,
-    ScrollView, Dimensions
-} from "react-native";
+import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const orangeBackground = require("../assets/bgImg.jpg");
-const userAvatar = require("../assets/avatar.png");
-import axiosInstance from "../utils/comreqtool";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {useNavigation} from "@react-navigation/native";
+export default function PersonalCenterScreen () {
+  const handleWalletPress = () => {
+    // 处理我的钱包点击事件
+  };
 
-export default function DetailsScreen() {
-    const [userData, setUserData] = useState([]);
-    const [refreshing, setRefreshing] = useState(false);
-    const navigation = useNavigation();
-    const onRefresh = useCallback(() => {
-        setRefreshing(true);
-        initData()
-        setRefreshing(false);
-    }, []);
+  const handleInviteFriendsPress = () => {
+    // 处理邀请好友点击事件
+  };
 
-    const initData = () => {
-        try {
-            getUserInfo()
-        } catch (e) {
-            console.log(e.message)
-        }
-    }
+  const handleMyFansPress = () => {
+    // 处理我的粉丝点击事件
+  };
 
-    const getUserInfo = async () => {
-        try {
-            const token = await AsyncStorage.getItem('userId');
-            console.log('获取到用户id:', token);
+  const handleWithdrawPress = () => {
+    // 处理提现点击事件
+  };
 
-            const formData = new FormData();
-            formData.append('userId', token);
+  const handleEarningsDetailPress = () => {
+    // 处理收益明细点击事件
+  };
 
-            const { data } = await axiosInstance.post('/user/getUserInfo', formData);
-            setUserData(data.data);
-        } catch (error) {
-            console.log(error.message);
-            alert(error.message);
-            navigation.navigate('Login');
-        }
-    };
-    return (
-        <ScrollView
-            refreshControl={
-                <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                />
-            }
-        >
-            <View style={styles.container}>
-                <ImageBackground source={orangeBackground} style={styles.backgroundImage}>
-                    <View style={styles.contentContainer}>
-                        <View style={styles.profileContainer}>
-                            <TouchableOpacity style={styles.avatarContainer}>
-                                <Image source={userAvatar} style={styles.avatar}/>
-                            </TouchableOpacity>
-                            <View style={styles.profileInfo}>
-                                <Text style={styles.userName}>{userData.username}</Text>
-                                <Text style={styles.inviteCode}>邀请码：{userData.invitationCode}</Text>
-                            </View>
-                        </View>
-                        <View style={styles.buttonGroup}>
-                            <TouchableOpacity style={styles.button}>
-                                <Text style={styles.buttonText}>邀请好友</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.button}>
-                                <Text style={styles.buttonText}>我的团队</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={styles.sectionTitle}>工具</Text>
-                        <TouchableOpacity style={styles.functionButton}>
-                            <Text style={styles.buttonText}>设置</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.functionButton}>
-                            <Text style={styles.buttonText}>消息</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                        style={styles.functionButton}
-                        onPress={() => navigation.navigate('withdraw')}
-                        >
-                            <Text style={styles.buttonText}>钱包</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ImageBackground>
-            </View>
-        </ScrollView>
-    );
-}
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.userInfo}>
+          <Image source={require('../assets/avatar.png')} style={styles.avatar} />
+          <Text style={styles.username}>xiaomo</Text>
+        </View>
+        <Icon name="edit" size={20} color="#999" style={styles.editIcon} />
+      </View>
+
+      <View style={styles.walletCard}>
+        <Text style={styles.walletCardTitle}>我的钱包</Text>
+        <View style={styles.walletCardRow}>
+          <View style={styles.walletCardItem}>
+            <Text style={styles.walletCardLabel}>可提现金额</Text>
+            <Text style={styles.walletCardAmount}>¥100.00</Text>
+          </View>
+          <View style={styles.walletCardItem}>
+            <Text style={styles.walletCardLabel}>提现中金额</Text>
+            <Text style={styles.walletCardAmount}>¥50.00</Text>
+          </View>
+          <View style={styles.walletCardItem}>
+            <Text style={styles.walletCardLabel}>待结算金额</Text>
+            <Text style={styles.walletCardAmount}>¥30.00</Text>
+          </View>
+        </View>
+      </View>
+
+      <TouchableOpacity style={styles.card} onPress={handleWalletPress}>
+        <Icon name="search" size={30} color="#007BFF" />
+        <Text style={styles.cardText}>我的钱包</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.card} onPress={handleInviteFriendsPress}>
+        <Icon name="glass" size={30} color="#007BFF" />
+        <Text style={styles.cardText}>邀请好友</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.card} onPress={handleMyFansPress}>
+        <Icon name="smile-o" size={30} color="#007BFF" />
+        <Text style={styles.cardText}>我的粉丝</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.card} onPress={handleWithdrawPress}>
+        <Icon name="money" size={30} color="#007BFF" />
+        <Text style={styles.cardText}>提现收益</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.card} onPress={handleEarningsDetailPress}>
+        <Icon name="line-chart" size={30} color="#007BFF" />
+        <Text style={styles.cardText}>收益明细</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    backgroundImage: {
-        flex: 1,
-        resizeMode: "cover",
-        justifyContent: "center",
-        width: Dimensions.get("window").width,
-        height: Dimensions.get("window").height
-    },
-    contentContainer: {
-        paddingHorizontal: 20,
-        paddingBottom: 50,
-    },
-    profileContainer: {
-        alignItems: "center",
-        marginTop: 50,
-        marginBottom: 30,
-    },
-    avatarContainer: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: "white",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    avatar: {
-        width: 96,
-        height: 96,
-        borderRadius: 48,
-    },
-    profileInfo: {
-        marginTop: 10,
-        alignItems: "center",
-    },
-    userName: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "white",
-        textAlign: "center",
-    },
-    inviteCode: {
-        fontSize: 16,
-        color: "white",
-        marginTop: 5,
-        textAlign: "center",
-    },
-    buttonGroup: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 20,
-    },
-    button: {
-        flex: 1,
-        backgroundColor: "white",
-        borderRadius: 8,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        marginRight: 10,
-        alignItems: "center",
-    },
-    buttonText: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#FF6600",
-    },
-    sectionTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "white",
-        marginTop: 20,
-        marginBottom: 10,
-    },
-    functionButton: {
-        backgroundColor: "white",
-        borderRadius: 8,
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        marginBottom: 10,
-        alignItems: "center",
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f8f8',
+    paddingVertical: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    paddingHorizontal: 20,
+  },
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 10,
+  },
+  username: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  editIcon: {
+    marginLeft: 10,
+  },
+  walletCard: {
+    backgroundColor: '#000',
+    padding: 15,
+    borderRadius: 10,
+    width: '90%',
+    alignSelf: 'center',
+  },
+  walletCardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#fff',
+  },
+  walletCardRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  walletCardItem: {
+    flex: 1,
+  },
+  walletCardLabel: {
+    fontSize: 14,
+    color: '#fff',
+  },
+  walletCardAmount: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    marginBottom: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  cardText: {
+    fontSize: 18,
+    marginLeft: 15,
+  },
 });
