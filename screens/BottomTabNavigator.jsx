@@ -51,18 +51,6 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen
-        name="登录"
-        component={LoginScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Image
-              source={require('../assets/user.png')}
-              style={{ width: 24, height: 24, tintColor: focused ? 'blue' : 'gray' }}
-            />
-          ),
-        }}
-      />
     </Tab.Navigator>
   );
 };
@@ -73,7 +61,7 @@ const HomeStackScreen = () => {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ headerShown: false }} // Hide the header for the HomeScreen
+        options={{ headerShown: false }} 
       />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />

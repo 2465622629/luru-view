@@ -2,7 +2,78 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground, ScrollView, RefreshControl } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Assuming you have installed the required package
 import axiosInstance from "../utils/comreqtool";
+import { NativeAppEventEmitter, NativeModules } from 'react-native';
 export default function PunchScreen() {
+  const APP_KEY = 'E6097975B89E83D6';
+  const REWARD_POS_ID = '09A177D681D6FB81241C3DCE963DCB46';
+  const INSERT_POS_ID = '1D273967F51868AF2C4E080D496D06D0';
+  //初始化广告
+  NativeAppEventEmitter.addListener('initResult', info => {
+    switch (info.callBackName) {
+      case 'onError':
+        console.log('初始化错误' + info.errorMsg);
+        break;
+      case 'onSuccess':
+        console.log('初始化成功');
+        NativeModules.AdUtilsModule.initRewardAd(REWARD_POS_ID);
+        NativeModules.AdUtilsModule.initInsertAd(INSERT_POS_ID);
+        break;
+    }
+  });
+  //激励广告 激励结果
+  NativeAppEventEmitter.addListener('rewardResult', info => {
+    switch (info.callBackName) {
+      case 'onClick':
+        console.log('onClick');
+        break;
+      case 'onClose':
+        console.log('onClose adId=' + info.adId);
+        console.log("未观看成功，不奖励金币");
+        break;
+      case 'onReward':
+        console.log('onReward adId=' + info.adId);
+        alert("打卡成功");
+        break;
+      case 'onShow':
+        console.log('onShow adId=' + info.adId);
+        break;
+      case 'onVideoEnd':
+        console.log('onVideoEnd adId=' + info.adId);
+        break;
+      case 'onVideoStart':
+        console.log('onVideoStart');
+        break;
+      case 'onError':
+        console.log(
+          'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
+        );
+        break;
+    }
+  });
+  //插入结果
+  NativeAppEventEmitter.addListener('insertResult', info => {
+    switch (info.callBackName) {
+      case 'onClick':
+        console.log('onClick');
+        break;
+      case 'onClose':
+        console.log('onClose');
+        break;
+      case 'onShow':
+        console.log('onShow');
+        break;
+      case 'onError':
+        console.log(
+          'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
+        );
+        break;
+    }
+  });
+
+  const showRewardAd = () => {
+    NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
+};
+
   const [pageData, setPageData] = useState({
     userData: {},
   });
@@ -20,7 +91,7 @@ export default function PunchScreen() {
       const formData = new FormData();
       formData.append('userId', token);
       const { data } = await axiosInstance.post('/user/getUserInfo', formData);
-      setPageData({userData: data.data });
+      setPageData({ userData: data.data });
       console.log(pageData.userData);
     } catch (error) {
       console.log(error.message);
@@ -35,7 +106,7 @@ export default function PunchScreen() {
       const formData = new FormData();
       formData.append('userId', token);
       const { data } = await axiosInstance.post('/punchRecords/punch', formData);
-      alert(data.message);
+      NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
       getUserInfo();
       setPunchCount(data.data.punchCount);
     }
@@ -43,7 +114,6 @@ export default function PunchScreen() {
       console.log(error.message);
     }
   };
-  
 
   const onRefresh = async () => {
     setRefreshing(true); // Set the refreshing state to true

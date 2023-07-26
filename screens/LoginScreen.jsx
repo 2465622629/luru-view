@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
         transformOrigin: 'center',
     },
     button: {
-        backgroundColor: 'blue',
+        backgroundColor: '#5468ff',
         padding: 10,
         borderRadius: 5,
     },
