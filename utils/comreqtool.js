@@ -4,7 +4,7 @@ import axios from 'axios';
 const instance = axios.create({
     // baseURL: 'https://xwdmbq-zmclmt-8080.preview.myide.io/', // 设置基础URL
     // baseURL: 'http://localhost:8080', // 设置基础URL
-    baseURL: 'http://cb894b5b-bcf6-460e-9320-a95042bf625f-8080-public.devstudio.aliyuncs.com', // 设置基础URL
+    baseURL: 'https://bf13e671-da37-4ca8-b581-f014133df2eb-8080-public.devstudio.aliyuncs.com', // 设置基础URL
     timeout: 5000, // 设置请求超时时间
     headers: {
         'Content-Type': 'multipart/form-data', // 设置请求头为 JSON 格式
@@ -47,7 +47,6 @@ instance.interceptors.request.use(
 // 添加响应拦截器
 instance.interceptors.response.use(
     response => {
-        // console.log(response.headers['set-cookie'])
         // 对响应数据做些什么
         return response;
     },

@@ -104,11 +104,7 @@ export default function HomeScreen() {
         setRefreshing(true);
         initData()
         setRefreshing(false);
-        initAd()
     }, []);
-    useEffect(() => {
-        initData()
-    }, [])
     const getCaptcha = async () => {
         try {
             let data = await axiosInstance.get('/captcha/getCaptcha')
@@ -117,6 +113,9 @@ export default function HomeScreen() {
             alert(e.message)
         }
     }
+    useEffect(() => {
+        initData()
+    }, [])
     // 添加观看广告次数
     const addWatchVied = async () => {
         try {
@@ -125,6 +124,25 @@ export default function HomeScreen() {
             dataForm.append('id', token);
             let data = await axiosInstance.post('/user/watchVideo', dataForm)
         } catch (e) {
+            alert(e.message)
+        }
+    }
+    //金币兑换时间
+    const moneyToTime = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userId');
+            let dataForm = new FormData();
+            dataForm.append('userId', token);
+            let data = await axiosInstance.post('/user/exchangeTime', dataForm)
+            console.log(data);
+            if (data.data.success) {
+                alert('兑换成功')
+                getUserInfo()
+            } else {
+                alert('兑换失败,金币不足')
+            }
+        } catch (e) {
+            console.log(e.message);
             alert(e.message)
         }
     }
@@ -268,15 +286,17 @@ export default function HomeScreen() {
     const getUserInfo = async () => {
         try {
             const token = await AsyncStorage.getItem('userId');
+            if (!token) {
+                alert('未获取到登录信息，请重新登录');
+                navigation.navigate('Login');
+                return;
+            }
             const formData = new FormData();
             formData.append('userId', token);
-
             const { data } = await axiosInstance.post('/user/getUserInfo', formData);
             setUserData(data.data);
         } catch (error) {
             console.log(error.message);
-            alert('未获取到登录信息，请重新登录');
-            navigation.navigate('Login');
         }
     };
     const handlePressIn = () => {
@@ -340,8 +360,13 @@ export default function HomeScreen() {
 
 
                 <View style={commonStyles.cont_box}>
-                    <Text>{`当前金币:${userData.coins === null ? 0 : userData.coins}`}</Text>
+                    <Text>{`当前金币:${userData.coins === null ? 0 : userData.coins}`}  </Text>
+                    <Text>{userData.endTime}到期</Text>
+                    <TouchableOpacity
+                        onPress={moneyToTime}
+                    >
                     <Text style={commonStyles.btn_txt}>兑换时间</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={commonStyles.cont_box}>
                     <Text>{`观看视频(${userData.watchVideoCount === null ? 0 : userData.watchVideoCount}/50次)`}</Text>

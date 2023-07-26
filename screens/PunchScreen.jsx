@@ -6,6 +6,7 @@ export default function PunchScreen() {
   const [pageData, setPageData] = useState({
     userData: {},
   });
+  const [punchCount, setPunchCount] = useState(0);
 
   const [refreshing, setRefreshing] = useState(false); // State variable for controlling the refresh
 
@@ -18,7 +19,6 @@ export default function PunchScreen() {
       const token = await AsyncStorage.getItem('userId');
       const formData = new FormData();
       formData.append('userId', token);
-
       const { data } = await axiosInstance.post('/user/getUserInfo', formData);
       setPageData({userData: data.data });
       console.log(pageData.userData);
@@ -33,10 +33,11 @@ export default function PunchScreen() {
     try {
       const token = await AsyncStorage.getItem('userId');
       const formData = new FormData();
-      formData.append('id', token);
+      formData.append('userId', token);
       const { data } = await axiosInstance.post('/punchRecords/punch', formData);
       alert(data.message);
       getUserInfo();
+      setPunchCount(data.data.punchCount);
     }
     catch (error) {
       console.log(error.message);
@@ -87,6 +88,9 @@ export default function PunchScreen() {
           </Text>
           <Text style={styles.ruleDescription}>
             严禁使用脚本，违规者封号，不解释
+          </Text>
+          <Text style={styles.ruleDescription}>
+            打卡次数{punchCount}次 满40次将奖励10积分
           </Text>
         </View>
       </ScrollView>

@@ -8,7 +8,8 @@ import { useNavigation } from "@react-navigation/native";
 export default function LoginScreen() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [buttonAnim] = useState(new Animated.Value(0));
+    const [loginButtonAnim] = useState(new Animated.Value(0));
+    const [registerButtonAnim] = useState(new Animated.Value(0));
 
     const navigation = useNavigation();
 
@@ -34,23 +35,41 @@ export default function LoginScreen() {
             await AsyncStorage.setItem('userId', userId.toString());
             alert('登录成功');
             navigation.navigate('Home');
+        } else {
+            alert('登录失败,请检查用户名和密码');
         }
     };
 
     const startButtonAnimation = (buttonType) => {
-        Animated.timing(buttonAnim, {
-            toValue: buttonType === 'login' ? 1 : 2,
-            duration: 200,
-            useNativeDriver: true,
-        }).start(() => {
-            // 动画完成后重置动画值
-            buttonAnim.setValue(0);
-        });
+        if (buttonType === 'login') {
+            Animated.timing(loginButtonAnim, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: true,
+            }).start(() => {
+                // 动画完成后重置动画值
+                loginButtonAnim.setValue(0);
+            });
+        } else if (buttonType === 'register') {
+            Animated.timing(registerButtonAnim, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: true,
+            }).start(() => {
+                // 动画完成后重置动画值
+                registerButtonAnim.setValue(0);
+            });
+        }
     };
 
-    const buttonScale = buttonAnim.interpolate({
-        inputRange: [0, 1, 2],
-        outputRange: [1, 0.9, 0.9],
+    const loginButtonScale = loginButtonAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 0.9],
+    });
+
+    const registerButtonScale = registerButtonAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 0.9],
     });
 
     return (
@@ -68,7 +87,7 @@ export default function LoginScreen() {
                 value={password}
                 onChangeText={setPassword}
             />
-            <Animated.View style={[styles.buttonContainer, { transform: [{ scale: buttonScale }] }]}>
+            <Animated.View style={[styles.buttonContainer, { transform: [{ scale: loginButtonScale }] }]}>
                 <TouchableOpacity
                     style={styles.button}
                     onPress={handleLogin}
@@ -77,7 +96,7 @@ export default function LoginScreen() {
                     <Text style={styles.buttonText}>登录</Text>
                 </TouchableOpacity>
             </Animated.View>
-            <Animated.View style={[styles.buttonContainer, { transform: [{ scale: buttonScale }] }]}>
+            <Animated.View style={[styles.buttonContainer, { transform: [{ scale: registerButtonScale }] }]}>
                 <TouchableOpacity
                     style={styles.button}
                     onPress={handleRegister}
