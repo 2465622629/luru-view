@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View,Image } from 'react-native';
 import axiosInstance from "../utils/comreqtool";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import JwtHelper from "../utils/jwtUtils";
@@ -10,7 +10,7 @@ export default function LoginScreen() {
     const [password, setPassword] = useState('');
     const [loginButtonAnim] = useState(new Animated.Value(0));
     const [registerButtonAnim] = useState(new Animated.Value(0));
-
+    const backgroundImageUrl = 'https://interactive-examples.mdn.mozilla.net/media/examples/lizard.png';
     const navigation = useNavigation();
 
     const handleLogin = () => {
@@ -74,69 +74,98 @@ export default function LoginScreen() {
 
     return (
         <View style={styles.container}>
+          <Image
+            source={{uri:backgroundImageUrl}}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.heading}>欢迎登录贝壳联盟</Text>
+          <Text style={styles.subheading}>请输入您的登录信息</Text>
+    
+          <View style={styles.inputContainer}>
             <TextInput
-                style={styles.input}
-                placeholder="用户名"
-                value={username}
-                onChangeText={setUsername}
+              style={styles.input}
+              placeholder="用户名"
+              keyboardType="email-address"
             />
             <TextInput
-                style={styles.input}
-                placeholder="密码"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
+              style={styles.input}
+              placeholder="密码"
+              secureTextEntry
             />
-            <Animated.View style={[styles.buttonContainer, { transform: [{ scale: loginButtonScale }] }]}>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleLogin}
-                    activeOpacity={0.8}
-                >
-                    <Text style={styles.buttonText}>登录</Text>
-                </TouchableOpacity>
-            </Animated.View>
-            <Animated.View style={[styles.buttonContainer, { transform: [{ scale: registerButtonScale }] }]}>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleRegister}
-                    activeOpacity={0.8}
-                >
-                    <Text style={styles.buttonText}>注册</Text>
-                </TouchableOpacity>
-            </Animated.View>
+          </View>
+    
+          <TouchableOpacity style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>登录</Text>
+          </TouchableOpacity>
+    
+          <TouchableOpacity style={styles.registerButton}>
+            <Text style={styles.registerButtonText}>注册</Text>
+          </TouchableOpacity>
         </View>
-    );
+      );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    logo: {
+      width: 150,
+      height: 150,
+    },
+    heading: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginTop: 20,
+    },
+    subheading: {
+      fontSize: 16,
+      color: '#888',
+      marginTop: 5,
+      marginBottom: 20,
+    },
+    inputContainer: {
+      width: '100%',
+      marginBottom: 20,
     },
     input: {
-        width: '80%',
-        marginBottom: 10,
-        padding: 10,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
+      height: 50,
+      borderWidth: 1,
+      borderColor: '#ccc',
+      borderRadius: 10,
+      paddingLeft: 15,
+      marginBottom: 10,
     },
-    buttonContainer: {
-        marginTop: 20,
-        width: '80%',
-        transformOrigin: 'center',
+    loginButton: {
+      backgroundColor: '#5468ff',
+      borderRadius: 10,
+      width: '100%',
+      height: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 10,
     },
-    button: {
-        backgroundColor: '#5468ff',
-        padding: 10,
-        borderRadius: 5,
+    loginButtonText: {
+      color: 'white',
+      fontSize: 18,
+      fontWeight: 'bold',
     },
-    buttonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'center',
+    registerButton: {
+      borderWidth: 1,
+      borderColor: '#5468ff',
+      borderRadius: 10,
+      width: '100%',
+      height: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
-});
+    registerButtonText: {
+      color: '#5468ff',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+  });

@@ -95,6 +95,7 @@ export default function HomeScreen() {
     const [animation] = useState(new Animated.Value(1));
     const [refreshing, setRefreshing] = useState(false);
     const navigation = useNavigation();
+    const [adIsSuccess, setAdIsSuccess] = useState(false);
 
     const APP_KEY = 'E6097975B89E83D6';
     const REWARD_POS_ID = '09A177D681D6FB81241C3DCE963DCB46';
@@ -116,6 +117,12 @@ export default function HomeScreen() {
     useEffect(() => {
         initData()
     }, [])
+    useEffect(() => {
+        if (!adIsSuccess) {
+            initAd()
+        }
+    }, [])
+
     // 添加观看广告次数
     const addWatchVied = async () => {
         try {
@@ -195,6 +202,7 @@ export default function HomeScreen() {
                 break;
             case 'onSuccess':
                 console.log('初始化成功');
+                setAdIsSuccess(true)
                 NativeModules.AdUtilsModule.initRewardAd(REWARD_POS_ID);
                 NativeModules.AdUtilsModule.initInsertAd(INSERT_POS_ID);
                 break;
@@ -235,22 +243,22 @@ export default function HomeScreen() {
     //插入结果
     NativeAppEventEmitter.addListener('insertResult', info => {
         switch (info.callBackName) {
-          case 'onClick':
-            console.log('onClick');
-            break;
-          case 'onClose':
-            console.log('onClose');
-            break;
-          case 'onShow':
-            console.log('onShow');
-            break;
-          case 'onError':
-            console.log(
-              'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
-            );
-            break;
+            case 'onClick':
+                console.log('onClick');
+                break;
+            case 'onClose':
+                console.log('onClose');
+                break;
+            case 'onShow':
+                console.log('onShow');
+                break;
+            case 'onError':
+                console.log(
+                    'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
+                );
+                break;
         }
-      });
+    });
     const initAd = () => {
         NativeModules.AdUtilsModule.initAd(APP_KEY);
     };
@@ -351,8 +359,8 @@ export default function HomeScreen() {
 
                 <View style={commonStyles.cont_box}>
                     <Text>{`当前积分:${userData.integral === null ? 0 : userData.integral}`}</Text>
-                    <TouchableOpacity 
-                    onPress={integralToMoney}
+                    <TouchableOpacity
+                        onPress={integralToMoney}
                     >
                         <Text style={commonStyles.btn_txt}>立即兑换</Text>
                     </TouchableOpacity>
@@ -365,7 +373,7 @@ export default function HomeScreen() {
                     <TouchableOpacity
                         onPress={moneyToTime}
                     >
-                    <Text style={commonStyles.btn_txt}>兑换时间</Text>
+                        <Text style={commonStyles.btn_txt}>兑换时间</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={commonStyles.cont_box}>
