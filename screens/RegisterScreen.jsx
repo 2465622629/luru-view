@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, TextInput, Button, StyleSheet, TouchableOpacity, Text, Animated} from 'react-native';
+import {View, TextInput, Button, StyleSheet, TouchableOpacity, Text, Animated,Image} from 'react-native';
 import axiosInstance from "../utils/comreqtool";
 import {useNavigation} from "@react-navigation/native";
 
@@ -9,20 +9,8 @@ export default function RegisterScreen() {
     const [inviteCode, setInviteCode] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const navigation = useNavigation();
-    const [buttonAnim] = useState(new Animated.Value(0));
 
     const fadeAnim = useState(new Animated.Value(0))[0];
-    const startButtonAnimation = () => {
-        Animated.timing(buttonAnim, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true,
-        }).start();
-    };
-    const buttonScale = buttonAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [1, 0.9],
-    });
     const fadeIn = () => {
         Animated.timing(fadeAnim, {
             toValue: 1,
@@ -30,13 +18,13 @@ export default function RegisterScreen() {
             useNativeDriver: true,
         }).start();
     };
+    const logoImageUrl = 'https://interactive-examples.mdn.mozilla.net/media/examples/lizard.png';
 
     const handleRegistration = () => {
         if (username === '' || password === '' || inviteCode === '' || phoneNumber === '') {
             alert('请填写完整信息');
             return;
         }
-        // fadeIn();
         Registration();
     };
     //数据规则判断
@@ -79,85 +67,90 @@ export default function RegisterScreen() {
 
     return (
         <View style={styles.container}>
+          <Image
+            source={{ uri: logoImageUrl }}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.heading}>欢迎来到贝壳联盟</Text>
+    
+          <View style={styles.inputContainer}>
             <TextInput
-                style={styles.input}
-                placeholder="用户名"
-                value={username}
-                onChangeText={setUsername}
+              style={styles.input}
+              placeholder="用户名"
+              secureTextEntry
+              value={username}
+              onChangeText={setUsername}
             />
             <TextInput
-                style={styles.input}
-                placeholder="密码"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
+              style={styles.input}
+              placeholder="密码"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
             />
             <TextInput
-                style={styles.input}
-                placeholder="邀请码"
-                value={inviteCode}
-                onChangeText={setInviteCode}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="手机号"
-                keyboardType="phone-pad"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-            />
-            <Animated.View style={[styles.buttonContainer, {transform: [{scale: buttonScale}]}]}>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleRegistration}
-                    activeOpacity={0.8}
-                >
-                    <Text style={styles.buttonText}>注册</Text>
-                </TouchableOpacity>
-            </Animated.View>
-
-            <Animated.View style={[styles.successMessage, {opacity: fadeAnim}]}>
-                <Text style={styles.successMessageText}>注册成功!</Text>
-            </Animated.View>
+              style={styles.input}
+              placeholder="邀请码"
+              secureTextEntry
+              value={inviteCode}
+              onChangeText={setInviteCode}
+            /><TextInput
+            style={styles.input}
+            placeholder="手机号"
+            secureTextEntry
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+          />
+          </View>
+    
+          <TouchableOpacity style={styles.registerButton} onPress={handleRegistration}>
+            <Text style={styles.buttonText}>注册</Text>
+          </TouchableOpacity>
         </View>
-    );
+      );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        paddingHorizontal: 16,
-        backgroundColor: '#f5f5f5',
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    logo: {
+      width: 150,
+      height: 150,
+    },
+    heading: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginTop: 20,
+      marginBottom: 20,
+    },
+    inputContainer: {
+      width: '100%',
     },
     input: {
-        height: 40,
-        borderColor: '#d3d3d3', // 更新边框颜色为更浅的灰色
-        borderWidth: 1,
-        marginBottom: 16,
-        paddingHorizontal: 10,
-        borderRadius: 4,
-        backgroundColor: 'white',
+      height: 50,
+      borderWidth: 1,
+      borderColor: '#ccc',
+      borderRadius: 10,
+      paddingLeft: 15,
+      marginBottom: 10,
     },
-    successMessage: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    successMessageText: {
-        color: 'green',
-        marginRight: 5,
-    },
-    button: {
-        backgroundColor: '#5468ff',
-        padding: 10,
-        borderRadius: 5,
+    registerButton: {
+      backgroundColor: '#5468ff',
+      borderRadius: 10,
+      width: '100%',
+      height: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 20,
     },
     buttonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    }
-
-});
-
+      color: 'white',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+  });

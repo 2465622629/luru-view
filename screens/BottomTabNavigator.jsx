@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Image } from 'react-native'; 
+import { Image } from 'react-native';
 import DetailsScreen from './DetailsScreen';
 import PunchScreen from './PunchScreen';
 import HomeScreen from './HomeScreen';
@@ -16,17 +16,17 @@ const BottomTabNavigator = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen
-       name="首页" 
-       component={HomeStackScreen} 
-       options={{
-        tabBarIcon: ({ focused }) => (
-          <Image
-            source={require('../assets/home.png')}
-            style={{ width: 24, height: 24, tintColor: focused ? 'blue' : 'gray' }}
-          />
-        ),
-      }}
-       />
+        name="首页"
+        component={HomeStackScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={require('../assets/home.png')}
+              style={{ width: 24, height: 24, tintColor: focused ? 'blue' : 'gray' }}
+            />
+          ),
+        }}
+      />
       <Tab.Screen
         name="打卡"
         component={PunchScreen}
@@ -52,9 +52,9 @@ const BottomTabNavigator = () => {
         }}
       />
 
-<Tab.Screen
-        name="登录"
-        component={LoginScreen}
+      {/* <Tab.Screen
+        name="注册"
+        component={RegisterScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <Image
@@ -63,7 +63,7 @@ const BottomTabNavigator = () => {
             />
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };
@@ -74,7 +74,7 @@ const HomeStackScreen = () => {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ headerShown: false }} 
+        options={{ headerShown: false }}
       />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
