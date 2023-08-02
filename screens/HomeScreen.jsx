@@ -13,6 +13,7 @@ import axiosInstance from "../utils/comreqtool";
 import { NativeAppEventEmitter, NativeModules } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Sound from 'react-native-sound';
 
 const commonStyles = StyleSheet.create({
     container: {
@@ -97,9 +98,9 @@ export default function HomeScreen() {
     const navigation = useNavigation();
     const [adIsSuccess, setAdIsSuccess] = useState(false);
 
-    const APP_KEY = 'E6097975B89E83D6';
-    const REWARD_POS_ID = '09A177D681D6FB81241C3DCE963DCB46';
-    const INSERT_POS_ID = '1D273967F51868AF2C4E080D496D06D0';
+    const APP_KEY = '92D42E2EB1842FAB';
+    const REWARD_POS_ID = '3F24470D94B6120114E1F575C3EC8119';
+    const INSERT_POS_ID = 'A5C6AAAE8DF4D9F0EEA4982E1C0536C9';
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -108,7 +109,7 @@ export default function HomeScreen() {
     }, []);
     const getCaptcha = async () => {
         try {
-            let data = await axiosInstance.get('/captcha/getCaptcha')
+            let data = await axiosInstance.post('/captcha/getCaptcha')
             setCaptchaImg(data.data.data)
         } catch (e) {
             alert(e.message)
@@ -122,6 +123,16 @@ export default function HomeScreen() {
             initAd()
         }
     }, [])
+//播放音频
+    const playSound = () => {
+        const s = new Sound('../assets/mp3/success.mp3', null, (e) => {
+            if (e) {
+                console.log('播放失败');
+                return;
+            }
+            s.play(() => s.release());
+        });
+    }
 
     // 添加观看广告次数
     const addWatchVied = async () => {

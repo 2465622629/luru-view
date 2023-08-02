@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground, ScrollView, RefreshControl } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Assuming you have installed the required package
-import axiosInstance from "../utils/comreqtool";
 import { NativeAppEventEmitter, NativeModules } from 'react-native';
+import { getUserInfo, getClockInfo, punch } from '../service/api'
 export default function PunchScreen() {
   const APP_KEY = 'E6097975B89E83D6';
   const REWARD_POS_ID = '09A177D681D6FB81241C3DCE963DCB46';
@@ -21,23 +21,30 @@ export default function PunchScreen() {
     }
   });
   //激励广告 激励结果
-  NativeAppEventEmitter.addListener('rewardResult', info => {
+  NativeAppEventEmitter.addListener('rewardResult', info => async () => {
     switch (info.callBackName) {
       case 'onClick':
         console.log('onClick');
         break;
       case 'onClose':
         console.log('onClose adId=' + info.adId);
-        console.log("未观看成功，不奖励金币");
         break;
       case 'onReward':
-        console.log('onReward adId=' + info.adId);
-        alert("打卡成功");
+        
         break;
       case 'onShow':
         console.log('onShow adId=' + info.adId);
         break;
       case 'onVideoEnd':
+        console.log("视频观看完成");
+        const formData = new FormData();
+        formData.append('userId', data.userData.id);
+        const {data} = await punch(formData);
+        if (data.success) {
+          alert('打卡成功，金币增加');
+        }else{
+          alert(data.message);
+        }
         console.log('onVideoEnd adId=' + info.adId);
         break;
       case 'onVideoStart':
@@ -70,48 +77,45 @@ export default function PunchScreen() {
     }
   });
 
-  const showRewardAd = () => {
-    NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
-};
-
-  const [pageData, setPageData] = useState({
+  const [data, setData] = useState({
     userData: {},
-  });
-  const [punchCount, setPunchCount] = useState(0);
+    punchData: {},
+  }); 
 
   const [refreshing, setRefreshing] = useState(false); // State variable for controlling the refresh
 
   useEffect(() => {
-    getUserInfo();
+    initData();
   }, []);
 
-  const getUserInfo = async () => {
+  const initData = async () => {
     try {
       const token = await AsyncStorage.getItem('userId');
       const formData = new FormData();
       formData.append('userId', token);
-      const { data } = await axiosInstance.post('/user/getUserInfo', formData);
-      setPageData({ userData: data.data });
-      console.log(pageData.userData);
+      if (token === null) {
+        alert('请先登录');
+        navigation.navigate('Login');
+      }
+      const { data: userinfo } = await getUserInfo(formData)
+      const { data: clockData } = await getClockInfo(formData)
+
+      setData({ userData: userinfo.data, punchData: clockData.data });
     } catch (error) {
       console.log(error.message);
       alert(error.message);
-      navigation.navigate('Login');
     }
   };
 
   const handlePunch = async () => {
     try {
-      const token = await AsyncStorage.getItem('userId');
-      const formData = new FormData();
-      formData.append('userId', token);
-      const { data } = await axiosInstance.post('/punchRecords/punch', formData);
       NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
-      getUserInfo();
-      setPunchCount(data.data.punchCount);
+      // getUserInfo();
+      // setPunchCount(data.data.punchCount);
+
     }
     catch (error) {
-      console.log(error.message);
+      alert(error.message);
     }
   };
 
@@ -119,7 +123,7 @@ export default function PunchScreen() {
     setRefreshing(true); // Set the refreshing state to true
     try {
       // Fetch the updated user info
-      await getUserInfo();
+      initData();
     } catch (error) {
       console.log(error.message);
     }
@@ -142,7 +146,7 @@ export default function PunchScreen() {
       >
         <TouchableOpacity style={styles.avatarContainer}>
           <Image source={require('../assets/icon.png')} style={styles.avatar} />
-          <Text> {pageData.userData.integral}积分 </Text>
+          <Text> {data.userData.coins}金币 </Text>
         </TouchableOpacity>
 
         {/* 打卡按钮 */}
@@ -154,13 +158,16 @@ export default function PunchScreen() {
         <View style={styles.ruleContainer}>
           <Text style={styles.ruleText}>打卡规则：</Text>
           <Text style={styles.ruleDescription}>
-            早起打卡，每天好心情
+            ①早起打卡，每天好心情。
           </Text>
           <Text style={styles.ruleDescription}>
-            严禁使用脚本，违规者封号，不解释
+            ②严禁使用脚本，
           </Text>
           <Text style={styles.ruleDescription}>
-            打卡次数{punchCount}次 满40次将奖励10积分
+            ③违规者封号处理，不解释！
+          </Text>
+          <Text style={styles.ruleDescription}>
+            当前打卡次数{data.punchData.punchCount}次 满40次将奖励10金币
           </Text>
         </View>
       </ScrollView>

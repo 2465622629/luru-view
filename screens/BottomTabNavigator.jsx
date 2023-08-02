@@ -72,13 +72,13 @@ const HomeStackScreen = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Home"
+        name="首页"
         component={HomeScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="withdraw" component={WithdrawScreen} />
+      <Stack.Screen name="登录" component={LoginScreen} />
+      <Stack.Screen name="注册" component={RegisterScreen} />
+      <Stack.Screen name="钱包" component={WithdrawScreen} />
     </Stack.Navigator>
   );
 };

@@ -85,7 +85,7 @@ export default function PersonalCenterScreen() {
 
                 <View style={styles.walletCard}>
                     <TouchableOpacity 
-                    onPress={() => navigation.navigate('withdraw')}
+                    onPress={() => navigation.navigate('钱包')}
                     >
                         <Text style={styles.walletCardTitle}>我的钱包</Text>
                         <View style={styles.walletCardRow}>

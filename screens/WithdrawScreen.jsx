@@ -37,7 +37,7 @@ const WithdrawScreen = () => {
     } catch (error) {
       console.log(error.message);
       alert(error.message);
-      navigation.navigate('Login');
+      navigation.navigate('登录');
     }
   };
 

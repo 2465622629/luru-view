@@ -20,7 +20,7 @@ export default function LoginScreen() {
 
     const handleRegister = () => {
         startButtonAnimation('register');
-        navigation.navigate('Register');
+        navigation.navigate('注册');
     };
 
     const login = async () => {
@@ -34,7 +34,7 @@ export default function LoginScreen() {
             const userId = jwt.user.id;
             await AsyncStorage.setItem('userId', userId.toString());
             alert('登录成功');
-            navigation.navigate('Home');
+            navigation.navigate('首页');
         } else {
             alert('登录失败,请检查用户名和密码');
         }
