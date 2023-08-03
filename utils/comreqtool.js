@@ -25,7 +25,7 @@ instance.interceptors.request.use(
             requestCount = 0;
         }
 
-        if (requestCount >= 20) {
+        if (requestCount >= 60) {
             // 如果请求数超过限制，抛出错误
             throw new Error('客官操作太快了,喝杯茶休息一下吧');
         }

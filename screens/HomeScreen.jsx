@@ -227,19 +227,19 @@ export default function HomeScreen() {
                 break;
             case 'onClose':
                 console.log('onClose adId=' + info.adId);
-                console.log("未观看成功，不奖励金币");
                 break;
             case 'onReward':
                 console.log('onReward adId=' + info.adId);
-                addIntegral()
-                addWatchVied()
-                alert("完成任务,获得奖励");
                 break;
             case 'onShow':
                 console.log('onShow adId=' + info.adId);
                 break;
             case 'onVideoEnd':
                 console.log('onVideoEnd adId=' + info.adId);
+                addIntegral()
+                addWatchVied()
+                alert("完成任务,获得奖励");
+                console.log("观看成功，奖励金币");
                 break;
             case 'onVideoStart':
                 console.log('onVideoStart');

@@ -133,14 +133,21 @@ const styles = StyleSheet.create({
     },
     input: {
       height: 50,
-      borderWidth: 1,
+      borderWidth: 0,
       borderColor: '#ccc',
       borderRadius: 10,
       paddingLeft: 15,
       marginBottom: 10,
+      //添加背景色为白色 并添加外阴影 拟物风格
+      backgroundColor: '#fff',
+      shadowColor: '#000',
+      shadowOpacity: 0.1,
+      shadowOffset: { width: 6, height: 6 }, //阴影偏移
+      shadowRadius: 5, //阴影模糊程度
+      elevation: 5, //Android端专用，iOS端不支持 阴影模糊程度
     },
     registerButton: {
-      backgroundColor: '#5468ff',
+      backgroundColor: '#000',
       borderRadius: 10,
       width: '100%',
       height: 50,

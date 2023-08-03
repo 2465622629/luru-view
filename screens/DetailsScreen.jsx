@@ -26,29 +26,29 @@ export default function PersonalCenterScreen() {
         getUserInfo();
         setRefreshing(false);
     }, []);
-
-    const handleInviteFriendsPress = () => {
-        // 处理邀请好友点击事件
+    const handleLogout = () => {
+        console.log("Logout button pressed");
+        // Add logout logic here
+    };
+    const user = {
+        name: "xiaomo",
+        time: "录入权限",
+        invitationCode: "邀请码"
     };
 
-    const handleMyFansPress = () => {
-        // 处理我的粉丝点击事件
-    };
-
-    const handleWithdrawPress = () => {
-        // 处理提现点击事件
-    };
-
-    const handleEarningsDetailPress = () => {
-        // 处理收益明细点击事件
-    };
+    const buttons = [
+        { label: "我的团队", name: 'team', onPress: () => console.log("我的团队") },
+        { label: "钱包", name: 'wallet', onPress: () => console.log("钱包") },
+        { label: "提现管理", name: 'bank', onPress: () => console.log("提现管理") },
+        { label: "我的订单", name: 'API', onPress: () => console.log("我的订单") },
+        { label: "账户余额", name: 'creditcard', onPress: () => console.log("账户余额") }
+    ];
     //获取用户信息
     const getUserInfo = async () => {
         try {
             const token = await AsyncStorage.getItem('userId');
             if (token === null) {
-                Alert.alert('请先登录');
-                navigation.navigate('Login');
+                navigation.navigate('登录');
             }
             const formData = new FormData();
             formData.append('userId', token);
@@ -63,137 +63,121 @@ export default function PersonalCenterScreen() {
     };
 
     return (
-        <ScrollView
-            style={styles.container}
-            refreshControl={ // 添加下拉刷新功能
-                <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                />
-            }
-        >
-            <ImageBackground
-                source={require('../assets/bgImg.jpg')}
-                resizeMode="stretch"
-            >
-                <View style={styles.header}>
-                    <View style={styles.userInfo}>
-                        <Image source={require('../assets/avatar.png')} style={styles.avatar} />
-                        <Text style={styles.username}>xiaomo</Text>
-                    </View>
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <View style={styles.avatarContainer}>
+                    <Image style={styles.avatar} source={require('../assets/avatar.png')} />
                 </View>
+                <View style={styles.userInfo}>
+                    <Text style={styles.userName}>{user.name}</Text>
+                    <Text style={styles.invitationCode}>邀请码: {user.invitationCode}</Text>
+                    <Text style={styles.time}>{user.time}</Text>
+                </View>
+            </View>
 
-                <View style={styles.walletCard}>
-                    <TouchableOpacity 
-                    onPress={() => navigation.navigate('钱包')}
-                    >
-                        <Text style={styles.walletCardTitle}>我的钱包</Text>
-                        <View style={styles.walletCardRow}>
-                            <View style={styles.walletCardItem}>
-                                <Text style={styles.walletCardLabel}>审核中</Text>
-                                <Text style={styles.walletCardAmount}>¥{data.walletData.pendingAmount}</Text>
-                            </View>
-                            <View style={styles.walletCardItem}>
-                                <Text style={styles.walletCardLabel}>已发放</Text>
-                                <Text style={styles.walletCardAmount}>¥{data.walletData.approvedAmount}</Text>
-                            </View>
-                            <View style={styles.walletCardItem}>
-                                <Text style={styles.walletCardLabel}>提现失败</Text>
-                                <Text style={styles.walletCardAmount}>¥{data.walletData.rejectedAmount}</Text>
-                            </View>
-                        </View>
+            <View style={styles.buttonContainer}>
+                {buttons.map(({ label, onPress, name }, index) => (
+                    <TouchableOpacity key={label} style={styles.button} onPress={onPress}>
+                        <AntIcon name={name} size={24} color="#000" style={styles.icon} />
+
+                        <Text style={styles.buttonLabel}>{label}</Text>
+
+                        {index === buttons.length  ? null : (
+                            <Icon name="angle-right" size={20} color="#000" style={styles.icon} />
+                        )}
                     </TouchableOpacity>
-                </View>
-            </ImageBackground>
+                ))}
+            </View>
 
-            <TouchableOpacity style={styles.card} onPress={handleInviteFriendsPress}>
-                <AntIcon name="addusergroup" size={25} color="#007BFF" />
-                <Text style={styles.cardText}>邀请好友</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.card} onPress={handleMyFansPress}>
-                <Icon name="umbrella" size={25} color="#007BFF" />
-                <Text style={styles.cardText}>我的粉丝</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.card} onPress={handleWithdrawPress}>
-                <Icon name="money" size={25} color="#007BFF" />
-                <Text style={styles.cardText}>提现收益</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.card} onPress={handleEarningsDetailPress}>
-                <Icon name="line-chart" size={25} color="#007BFF" />
-                <Text style={styles.cardText}>收益明细</Text>
-            </TouchableOpacity>
-        </ScrollView>
+            <View style={styles.footer}>
+                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                    <Text style={styles.logoutButtonText}>退出登录</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#F0F0F0',
+        padding: 20
     },
     header: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
         marginBottom: 20,
-        paddingHorizontal: 20,
+        marginLeft: 50,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     userInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flex: 7,
+        marginLeft: 20
     },
     avatar: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        marginRight: 10,
+        width: 80,
+        height: 80,
+        borderRadius: 40
     },
-    username: {
-        fontSize: 20,
+    avatarContainer: {
+        flex: 3,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    userName: {
+        fontSize: 24,
         fontWeight: 'bold',
+        marginBottom: 8
     },
-    walletCard: {
-        backgroundColor: '#363636',
-        padding: 15,
-        borderRadius: 10,
-        width: '90%',
-        alignSelf: 'center',
-        marginBottom: 20,
-    },
-    walletCardTitle: {
+    time: {
         fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#fff',
+        color: 'gray'
     },
-    walletCardRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    invitationCode: {
+        fontSize: 16
     },
-    walletCardItem: {
+    icon: {
+        marginHorizontal: 8
+    },
+    buttonContainer: {
         flex: 1,
+        justifyContent: 'center',
     },
-    walletCardLabel: {
-        fontSize: 14,
-        color: '#fff',
-    },
-    walletCardAmount: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#fff',
-    },
-    card: {
+    button: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'left',
         backgroundColor: '#fff',
-        marginTop: 5,
-        paddingHorizontal: 20,
-        paddingVertical: 15,
+        borderRadius: 8,
+        paddingVertical: 16,
+        marginBottom: 16
+
     },
-    cardText: {
-        fontSize: 18,
-        marginLeft: 15,
+    icon: {
+        marginHorizontal: 8
     },
+    buttonLabel: {
+        flex: 1,
+        color: '#000',
+        fontSize: 16,
+        textAlign: 'left',
+        marginLeft: 10
+    },
+    footer: {
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        // marginTop: 'auto'
+        marginBottom: 60
+    },
+    logoutButton: {
+        backgroundColor: '#000',
+        borderRadius: 8,
+        paddingVertical: 12,
+        paddingHorizontal: 130
+    },
+    logoutButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: 'bold'
+    }
 });
