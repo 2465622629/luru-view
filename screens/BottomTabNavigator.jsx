@@ -52,9 +52,9 @@ const BottomTabNavigator = () => {
         }}
       />
 
-      {/* <Tab.Screen
-        name="注册"
-        component={RegisterScreen}
+      <Tab.Screen
+        name="登录"
+        component={LoginScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <Image
@@ -63,7 +63,7 @@ const BottomTabNavigator = () => {
             />
           ),
         }}
-      /> */}
+      />
     </Tab.Navigator>
   );
 };

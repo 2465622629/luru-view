@@ -18,7 +18,7 @@ export default function RegisterScreen() {
             useNativeDriver: true,
         }).start();
     };
-    const logoImageUrl = 'https://interactive-examples.mdn.mozilla.net/media/examples/lizard.png';
+    const logoImageUrl = '../assets/logo.png';
 
     const handleRegistration = () => {
         if (username === '' || password === '' || inviteCode === '' || phoneNumber === '') {
@@ -68,7 +68,7 @@ export default function RegisterScreen() {
     return (
         <View style={styles.container}>
           <Image
-            source={{ uri: logoImageUrl }}
+            source={require(logoImageUrl)}
             style={styles.logo}
             resizeMode="contain"
           />
