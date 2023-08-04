@@ -307,7 +307,7 @@ export default function HomeScreen() {
             const token = await AsyncStorage.getItem('userId');
             if (!token) {
                 alert('未获取到登录信息，请重新登录');
-                navigation.navigate('Login');
+                navigation.navigate('登录');
                 return;
             }
             const formData = new FormData();

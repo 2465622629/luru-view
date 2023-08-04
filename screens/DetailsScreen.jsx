@@ -21,8 +21,6 @@ export default function PersonalCenterScreen() {
     // 刷新数据的方法
     const onRefresh = useCallback(() => {
         setRefreshing(true);
-        // 在这里进行刷新数据的操作，比如重新获取数据
-        // 这里使用 setTimeout 模拟异步请求，实际使用时应该使用真实的异步请求
         getUserInfo();
         setRefreshing(false);
     }, []);
@@ -78,7 +76,7 @@ export default function PersonalCenterScreen() {
             <View style={styles.buttonContainer}>
                 {buttons.map(({ label, onPress, name }, index) => (
                     <TouchableOpacity key={label} style={styles.button} onPress={onPress}>
-                        <AntIcon name={name} size={24} color="#000" style={styles.icon} />
+                        <AntIcon name={name} size={20} color="#409eff" style={styles.icon} />
 
                         <Text style={styles.buttonLabel}>{label}</Text>
 
@@ -106,7 +104,7 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        marginBottom: 20,
+        marginTop: 25,
         marginLeft: 50,
         justifyContent: 'center',
         alignItems: 'center'
@@ -118,7 +116,7 @@ const styles = StyleSheet.create({
     avatar: {
         width: 80,
         height: 80,
-        borderRadius: 40
+        borderRadius: 50
     },
     avatarContainer: {
         flex: 3,
@@ -135,9 +133,11 @@ const styles = StyleSheet.create({
         color: 'gray'
     },
     invitationCode: {
+        color: '#333',
         fontSize: 16
     },
     icon: {
+        fontWeight: 'bold',
         marginHorizontal: 8
     },
     buttonContainer: {
@@ -158,10 +158,11 @@ const styles = StyleSheet.create({
     },
     buttonLabel: {
         flex: 1,
-        color: '#000',
+        color: '#333',
         fontSize: 16,
         textAlign: 'left',
-        marginLeft: 10
+        marginLeft: 10,
+        fontWeight: 'bold'
     },
     footer: {
         justifyContent: 'flex-end',
