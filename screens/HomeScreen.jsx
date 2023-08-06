@@ -63,8 +63,8 @@ const commonStyles = StyleSheet.create({
     },
     bullet: {
         marginLeft: 10,
-    }
-    , btn_txt: {
+    },
+    btn_txt: {
         fontWeight: 'bold',
         color: 'rgb(73, 187, 213)',
     },
@@ -123,7 +123,7 @@ export default function HomeScreen() {
             initAd()
         }
     }, [])
-//播放音频
+    //播放音频
     const playSound = () => {
         const s = new Sound('../assets/mp3/success.mp3', null, (e) => {
             if (e) {
@@ -306,7 +306,6 @@ export default function HomeScreen() {
         try {
             const token = await AsyncStorage.getItem('userId');
             if (!token) {
-                alert('未获取到登录信息，请重新登录');
                 navigation.navigate('登录');
                 return;
             }

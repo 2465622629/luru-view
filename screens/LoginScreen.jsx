@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
+import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Alert } from 'react-native';
 import axiosInstance from "../utils/comreqtool";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import JwtHelper from "../utils/jwtUtils";
@@ -33,10 +33,7 @@ export default function LoginScreen() {
             let jwt = JwtHelper.decodeToken(cookie); //解密
             const userId = jwt.user.id;
             await AsyncStorage.setItem('userId', userId.toString());
-            alert('登录成功');
             navigation.navigate('首页');
-        } else {
-            alert('登录失败,请检查用户名和密码');
         }
     };
 
