@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground, ScrollView, RefreshControl, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import AntIcon from 'react-native-vector-icons/AntDesign';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -44,10 +43,10 @@ export default function PersonalCenterScreen() {
     };
 
     const buttons = [
-        { label: "我的团队", name: 'users', onPress: () => console.log("我的团队") },
-        { label: "钱包", name: 'box', onPress: () => console.log("钱包") },
+        { label: "我的团队", name: 'users', onPress: () =>  navigation.navigate('我的团队') },
+        { label: "钱包", name: 'box', onPress: () => navigation.navigate('我的钱包') },
         { label: "提现管理", name: 'battery-charging', onPress: () => console.log("提现管理") },
-        { label: "我的订单", name: 'bell', onPress: () => console.log("我的订单") },
+        { label: "我的订单", name: 'bell', onPress: () => alert("开发中...") },
         { label: "账户余额", name: 'feather', onPress: () => console.log("账户余额") }
     ];
     //录入权限

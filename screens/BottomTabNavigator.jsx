@@ -8,6 +8,7 @@ import HomeScreen from './HomeScreen';
 import LoginScreen from './LoginScreen';
 import RegisterScreen from './RegisterScreen';
 import WithdrawScreen from './WithdrawScreen';
+import InviteFriendScreen from './InviteFriendScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -79,6 +80,8 @@ const HomeStackScreen = () => {
       <Stack.Screen name="登录" component={LoginScreen} />
       <Stack.Screen name="注册" component={RegisterScreen} />
       <Stack.Screen name="钱包" component={WithdrawScreen} />
+      <Stack.Screen name="我的团队" component={InviteFriendScreen} />
+      <Stack.Screen name="我的钱包" component={WithdrawScreen} />
     </Stack.Navigator>
   );
 };

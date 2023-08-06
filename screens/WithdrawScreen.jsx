@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, Button } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import axiosInstance from "../utils/comreqtool";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const WithdrawScreen = () => {
+export default function WithdrawScreen() {
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [data, setData] = useState({
     userData: {},
@@ -11,7 +12,7 @@ const WithdrawScreen = () => {
   const [refreshing, setRefreshing] = useState(false); // State variable for controlling the refresh
 
   useEffect(() => {
-    getUserInfo();
+    // getUserInfo();
   }, []);
 
   const handleWithdraw = async () => {
@@ -52,64 +53,147 @@ const WithdrawScreen = () => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
-      }
-    >
-      <Text style={styles.label}>可提现金额: {data.userData.money} 元</Text>
+    <View style={styles.container}>
+      <View style={styles.card}>
+        <View style={styles.row}>
+          <View style={styles.iconContainer}>
+            <View style={styles.iconBackground}>
+              <Icon name="money" size={24} color="#ffffff" />
+            </View>
+          </View>
+          <View style={styles.column}>
+            <Text style={styles.title}>可提现金额</Text>
+            <Text style={styles.content}>￥500.00</Text>
+          </View>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>提现</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View>
+        <Text style={styles.topTitle}>提现记录</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="输入提现金额"
-        keyboardType="numeric"
-        value={withdrawAmount}
-        onChangeText={setWithdrawAmount}
-      />
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <View style={styles.iconContainer}>
+              <View style={styles.iconBackground}>
+                <Icon name="check" size={24} color="#ffffff" />
+              </View>
+            </View>
+            <View style={styles.column}>
+              <Text style={styles.title}>提现成功</Text>
+              <Text style={styles.content}>2023-11-1 13:10:1</Text>
 
-      <TouchableOpacity style={styles.button} onPress={handleWithdraw}>
-        <Text style={styles.buttonText}>提现</Text>
-      </TouchableOpacity>
-    </ScrollView>
+            </View>
+            <Text style={styles.titleMoney}>￥500</Text>
+          </View>
+        </View>
+
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <View style={styles.iconContainer}>
+              <View style={styles.iconBackground}>
+                <Icon name="info" size={24} color="#ffffff" />
+              </View>
+            </View>
+            <View style={styles.column}>
+              <Text style={styles.title}>提现失败</Text>
+              <Text style={styles.content}>2023-11-1 13:10:1</Text>
+            </View>
+              <Text style={styles.titleMoney}>￥500</Text>
+          </View>
+        </View>
+      </View>
+
+      <View>
+        <Text style={styles.topTitle}>提现方式</Text>
+
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <View style={styles.iconContainer}>
+              <View style={styles.iconBackground}>
+                <Icon name="money" size={24} color="#ffffff" />
+              </View>
+            </View>
+            <View style={styles.column}>
+              <Text style={styles.title}>支付宝</Text>
+              <Text style={styles.content}>尾号xxx</Text>
+            </View>
+            <Icon name="check-square" size={20} color="#22c55e" />
+          </View>
+        </View>
+      </View>
+
+      <View>
+        <Text style={styles.topTitle}>提现规则</Text>
+        <Text style={styles.content}>1.1元起提现</Text>
+        <Text style={styles.content}>1.提现金额必须大于等于100元</Text>
+      </View>
+    </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 16,
+    backgroundColor: '#ffffff',
+  },
+  card: {
+    marginBottom: 16,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: '#f2f2f2',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    marginRight: 12,
+  },
+  iconBackground: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#2196f3',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  label: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  column: {
+    flex: 1,
   },
-  input: {
-    width: '100%',
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 20,
+  title: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    marginBottom: 4,
+    color: '#000',
+  },
+  content: {
+    fontSize: 16,
+    color: '#999',
   },
   button: {
-    backgroundColor: 'blue',
-    paddingVertical: 10,
-    paddingHorizontal: 100,
-    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    backgroundColor: '#2196f3',
+    marginLeft: 'auto',
   },
   buttonText: {
-    color: 'white',
-    fontSize: 18,
+    color: '#ffffff',
     fontWeight: 'bold',
   },
-});
+  topTitle: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#000',
+  },
+  titleMoney: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
+    color: '#000',
+  },
 
-export default WithdrawScreen;
+});
