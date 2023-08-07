@@ -1,32 +1,58 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getInviteInfo } from '../service/api'
 
 export default function InviteFriendScreen() {
+    const [refreshing, setRefreshing] = useState(false);
+    const [data, setData] = useState({
+        invitationList: [],
+    });
+    const onRefresh = async () => {
+        setRefreshing(true);
+        try {
+            initData();
+        } catch (error) {
+            console.log(error.message);
+        }
+        setRefreshing(false);
+    };
+    //获取提现记录
+    const initData = async () => {
+        const token = await AsyncStorage.getItem('userId');
+        let dataForm = new FormData();
+        dataForm.append('userId', token);
+        const { data: invitationList } = await getInviteInfo(dataForm);
+        setData({ invitationList: invitationList.data });
+    };
+
+
     return (
-        <View style={styles.container}>
+        <ScrollView
+            contentContainerStyle={styles.container}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        >
+
             <Text style={styles.title}>邀请记录</Text>
-            <View style={styles.card}>
-                <View style={styles.friendCard}>
-                    {/* 第一个好友 */}
-                    <View style={styles.avatar} />
-                    <View style={styles.friendInfo}>
-                        <Text style={styles.infoText}>昵称: 用户1</Text>
-                        <Text style={styles.infoText}>邀请码: ABC123</Text>
-                        <Text style={styles.infoText}>注册时间: 2022-01-01</Text>
-                    </View>
-                </View>
-            </View>
-            <View style={styles.card}>
-                <View style={styles.friendCard}>
-                    {/* 第二个好友 */}
-                    <View style={styles.avatar} />
-                    <View style={styles.friendInfo}>
-                        <Text style={styles.infoText}>昵称: 用户2</Text>
-                        <Text style={styles.infoText}>邀请码: DEF456</Text>
-                        <Text style={styles.infoText}>注册时间: 2022-02-01</Text>
-                    </View>
-                </View>
-            </View>
+
+            {
+                data.invitationList.map((item, index) => {
+                    return (
+                        <View style={styles.card}>
+                            <View style={styles.friendCard}>
+                                <View style={styles.avatar} />
+                                <View style={styles.friendInfo}>
+                                    <Text style={styles.infoText}>昵称: {item.username}</Text>
+                                    <Text style={styles.infoText}>邀请码: {item.invitationCode}</Text>
+                                    <Text style={styles.infoText}>注册时间: {item.createdAt}</Text>
+                                </View>
+                            </View>
+                        </View>
+                    );
+                })
+            }
+
 
             <Text style={styles.title}>邀请规则</Text>
             <View style={styles.card}>
@@ -43,7 +69,7 @@ export default function InviteFriendScreen() {
                 <Text style={styles.statText}>邀请总人数: 10人</Text>
                 <Text style={styles.statText}>已获得奖励: 100积分</Text>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 

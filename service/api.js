@@ -11,6 +11,10 @@ export async function register(body) {
 export async function getUserInfo(body) {
     return await axiosInstance.post("/user/getUserInfo", body);
 }
+//获取邀请记录
+export async function getInviteInfo(body) {
+    return await axiosInstance.post("/user/getInvitationList", body);
+}
 //获取验证码
 export async function getCode(body) {
     return await axiosInstance.post("/captcha/getCaptcha", body);
@@ -22,4 +26,8 @@ export async function getClockInfo(body) {
 //打卡
 export async function punch(body) {
     return await axiosInstance.post("/punchRecords/punch", body);
+}
+//获取最近两次提现记录
+export async function getWithdrawInfo(body) {
+    return await axiosInstance.post("/withdrawals/queryWithdrawalsRecordByStatus", body);
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground, ScrollView, RefreshControl, Button } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Assuming you have installed the required package
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import { NativeAppEventEmitter, NativeModules } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { getUserInfo, getClockInfo, punch } from '../service/api'
@@ -16,7 +16,7 @@ export default function PunchScreen() {
   });
 
 
-  const [refreshing, setRefreshing] = useState(false); // State variable for controlling the refresh
+  const [refreshing, setRefreshing] = useState(false); 
 
   useEffect(() => {
     // initData();
