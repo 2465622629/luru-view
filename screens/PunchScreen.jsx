@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground, ScrollView, RefreshControl, Button } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeAppEventEmitter, NativeModules } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { getUserInfo, getClockInfo, punch } from '../service/api'
@@ -8,18 +8,49 @@ export default function PunchScreen() {
   const APP_KEY = '92D42E2EB1842FAB';
   const REWARD_POS_ID = '3F24470D94B6120114E1F575C3EC8119';
   const INSERT_POS_ID = 'A5C6AAAE8DF4D9F0EEA4982E1C0536C9';
-
+  const [rewardAd, setRewardAd] = useState(false);
+ //激励广告 激励结果
+ NativeAppEventEmitter.addListener('rewardResult', info => {
+  switch (info.callBackName) {
+      case 'onClick':
+          console.log('onClick');
+          break;
+      case 'onClose':
+          console.log('onClose adId=' + info.adId);
+          break;
+      case 'onReward':
+          console.log('onReward adId=' + info.adId);
+          break;
+      case 'onShow':
+          console.log('onShow adId=' + info.adId);
+          break;
+      case 'onVideoEnd':
+          console.log('onVideoEnd adId=' + info.adId);
+          console.log("观看成功，奖励金币");
+          setRewardAd(true);
+          break;
+      case 'onVideoStart':
+          console.log('onVideoStart');
+          break;
+      case 'onError':
+          console.log(
+              'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
+          );
+          break;
+  }
+});
 
   const [data, setData] = useState({
     userData: {},
     punchData: {},
   });
+  const [checkIns, setCheckIns] = useState([]);
 
 
-  const [refreshing, setRefreshing] = useState(false); 
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    // initData();
+    initData();
   }, []);
 
   const initData = async () => {
@@ -27,26 +58,50 @@ export default function PunchScreen() {
       const token = await AsyncStorage.getItem('userId');
       const formData = new FormData();
       formData.append('userId', token);
-      if (token === null) {
-        alert('请先登录');
-        navigation.navigate('Login');
-      }
       const { data: userinfo } = await getUserInfo(formData)
       const { data: clockData } = await getClockInfo(formData)
-
       setData({ userData: userinfo.data, punchData: clockData.data });
     } catch (error) {
       console.log(error.message);
       alert(error.message);
     }
   };
+  // 更新打卡日期
+  const updateCheckIns = async () => {
+    // const currentDate = new Date().toISOString().split('T')[0]; // 获取当前日期（格式：YYYY-MM-DD）
+    const currentDate = new Date().toLocaleString('en-US', {
+      timeZone: 'Asia/Shanghai',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false // 设置为24小时制
+    });
+    const updatedCheckIns = [currentDate, ...checkIns.slice(0, 2)]; // 新的打卡日期放在最前面，只保留最新的三次打卡日期
+
+    try {
+      const storedCheckIns = await AsyncStorage.getItem('checkIns'); // 获取已存储的打卡日期
+      if (storedCheckIns) { // 如果已存储的打卡日期存在
+        setCheckIns(JSON.parse(storedCheckIns));
+      }
+      await AsyncStorage.setItem('checkIns', JSON.stringify(updatedCheckIns));
+      setCheckIns(updatedCheckIns);
+    } catch (error) {
+      console.log('Error updating check-ins', error);
+    }
+  };
 
   const handlePunch = async () => {
     try {
+      setRewardAd(false);
       NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
-      // getUserInfo();
-      // setPunchCount(data.data.punchCount);
-
+      if(rewardAd){
+        const token = await AsyncStorage.getItem('userId');
+        const formData = new FormData();
+        formData.append('userId', token);
+        const { data: res } = await punch(formData);
+        alert(res.message);
+      }
+      updateCheckIns();
     }
     catch (error) {
       alert(error.message);
@@ -70,7 +125,7 @@ export default function PunchScreen() {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
       <View style={styles.card}>
-        <TouchableOpacity onPress={() => console.log("123")}>
+        <TouchableOpacity onPress={handlePunch}>
           <View style={styles.box}>
             <View>
               {/* 图片 */}
@@ -78,11 +133,10 @@ export default function PunchScreen() {
                 <Image style={styles.avatar} source={require('../assets/avatar.png')} />
               </View>
               <View style={styles.dec}>
-                <Text>昵称</Text>
-                <Text>打卡时间</Text>
+                <Text>{data.userData.username}</Text>
+                <Text>{checkIns[0] ? checkIns[0] : "今日未打卡"}</Text>
               </View>
             </View>
-
             <View style={styles.suceess}>
               <FeatherIcon color="#fff" size={30} name='check' />
             </View>
@@ -93,29 +147,25 @@ export default function PunchScreen() {
           {/* 左侧 */}
           <View>
             <View>
-              <Text>今日累计打卡</Text>
+              <Text>今日累计打卡{data.punchData.punchCount}</Text>
             </View>
             <View>
-              <Text>连续打卡 次</Text>
+              <Text>连续打卡{data.punchData.punchCount}次</Text>
             </View>
           </View>
           {/* 右侧 */}
           <View>
-            <View><Text>积分</Text></View>
-            <View><Text>100</Text></View>
+            <View><Text>金币</Text></View>
+            <View><Text>{data.userData.coins}</Text></View>
           </View>
         </View>
       </View>
-      {/* <View style={styles.card}>
-        <Text style={styles.title}>打卡任务</Text>
-        <Text style={styles.content}>完成每日任务</Text>
-      </View> */}
 
       <View style={styles.card}>
         <Text style={styles.title}>打卡记录</Text>
-        <Text style={styles.content}>2021-01-01: 打卡成功</Text>
-        <Text style={styles.content}>2021-01-02: 打卡成功</Text>
-        <Text style={styles.content}>2021-01-02: 打卡成功</Text>
+        {checkIns.map((checkIn, index) => (
+          <Text key={index} style={styles.content}>{checkIn} 打卡成功</Text>
+        ))}
       </View>
 
       <View style={styles.card}>

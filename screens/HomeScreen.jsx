@@ -97,6 +97,8 @@ export default function HomeScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const navigation = useNavigation();
     const [adIsSuccess, setAdIsSuccess] = useState(false);
+    //是否可以提供奖励
+    const [isReward, setIsReward] = useState(false);
 
     const APP_KEY = '92D42E2EB1842FAB';
     const REWARD_POS_ID = '3F24470D94B6120114E1F575C3EC8119';
@@ -116,13 +118,25 @@ export default function HomeScreen() {
         }
     }
     useEffect(() => {
-        initData()
-    }, [])
-    useEffect(() => {
+        const subscription = NativeAppEventEmitter.addListener('rewardResult', handleEvent);
         if (!adIsSuccess) {
             initAd()
         }
+        initData()
+        return () => {
+            subscription.remove();
+          };
     }, [])
+
+    //处理广告事件
+    const handleEvent = (e) => {
+        if(e.callBackName=="onVideoEnd"){
+            console.log("广告结束");
+        }
+        if(e.callBackName=="onClose"){
+            console.log("提前关闭广告");
+        }
+    }
     //播放音频
     const playSound = () => {
         const s = new Sound('../assets/mp3/success.mp3', null, (e) => {
@@ -220,37 +234,40 @@ export default function HomeScreen() {
         }
     });
     //激励广告 激励结果
-    NativeAppEventEmitter.addListener('rewardResult', info => {
-        switch (info.callBackName) {
-            case 'onClick':
-                console.log('onClick');
-                break;
-            case 'onClose':
-                console.log('onClose adId=' + info.adId);
-                break;
-            case 'onReward':
-                console.log('onReward adId=' + info.adId);
-                break;
-            case 'onShow':
-                console.log('onShow adId=' + info.adId);
-                break;
-            case 'onVideoEnd':
-                console.log('onVideoEnd adId=' + info.adId);
-                addIntegral()
-                addWatchVied()
-                alert("完成任务,获得奖励");
-                console.log("观看成功，奖励金币");
-                break;
-            case 'onVideoStart':
-                console.log('onVideoStart');
-                break;
-            case 'onError':
-                console.log(
-                    'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
-                );
-                break;
-        }
-    });
+
+    // const subscription = NativeAppEventEmitter.addListener('rewardResult', info => {
+    //     switch (info.callBackName) {
+    //         case 'onClick':
+    //             console.log('onClick');
+    //             break;
+    //         case 'onClose':
+    //             console.log('onClose adId=' + info.adId);
+    //             break;
+    //         case 'onReward':
+    //             console.log('onReward adId=' + info.adId);
+    //             break;
+    //         case 'onShow':
+    //             console.log('onShow adId=' + info.adId);
+    //             break;
+    //         case 'onVideoEnd':
+    //             console.log('onVideoEnd adId=' + info.adId);
+    //             // addIntegral()
+    //             // addWatchVied()
+    //             alert("完成任务,获得奖励");
+    //             console.log("观看成功，奖励金币");
+    //             subscription.remove();
+    //             break;
+    //         case 'onVideoStart':
+    //             console.log('onVideoStart');
+    //             break;
+    //         case 'onError':
+    //             console.log(
+    //                 'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
+    //             );
+    //             break;
+    //     }
+    // });
+
     //插入结果
     NativeAppEventEmitter.addListener('insertResult', info => {
         switch (info.callBackName) {

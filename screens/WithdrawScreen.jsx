@@ -35,11 +35,11 @@ export default function WithdrawScreen() {
       const formData = new FormData();
       formData.append('userId', token);
       const { data: userData } = await getUserInfo(formData);
-      setData(prevData => ({ ...prevData, userData: userData.data }));
+      // setData(prevData => ({ ...prevData, userData: userData.data }));
       //获取用户提现记录
       const { data: withdrawInfo } = await getWithdrawInfo(formData)
       console.log(withdrawInfo.data);
-      setData(prevData => ({ ...prevData, withdrawInfo: withdrawInfo.data }));
+      setData({ userData: userData.data, withdrawInfo: withdrawInfo.data });
     } catch (error) {
       console.log(error.message);
     }
@@ -123,8 +123,8 @@ export default function WithdrawScreen() {
             </View>
             <View style={styles.column}>
               <Text style={styles.title}>支付宝</Text>
-              {/* <Text style={styles.content}>账号{data.userData.phone.slice(-10,-7)}xxx{data.userData.phone.slice(-4)}</Text> */}
-              <Text style={styles.content}>账号{data.userData.phone}</Text>
+              <Text style={styles.content}>账号{data.userData.phone.slice(-10,-7)}xxx{data.userData.phone.slice(-4)}</Text>
+              {/* <Text style={styles.content}>账号{data.userData.phone}</Text> */}
             </View>
             <Icon name="check-square" size={20} color="#22c55e" />
           </View> 
