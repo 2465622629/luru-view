@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground, Scrol
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeAppEventEmitter, NativeModules } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 import { getUserInfo, getClockInfo, punch } from '../service/api'
 export default function PunchScreen() {
   const APP_KEY = '92D42E2EB1842FAB';
@@ -17,8 +18,7 @@ export default function PunchScreen() {
     },
   });
   const [checkIns, setCheckIns] = useState([]); // 打卡日期
-
-
+  const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
@@ -40,9 +40,6 @@ export default function PunchScreen() {
       setData({ ...data, punchData: clockData.data });
       alert(res.message);
       // setRewardAd(true);
-    }
-    if (e.callBackName == "onClose") {
-      console.log("提前关闭广告");
     }
   }
 
@@ -72,7 +69,7 @@ export default function PunchScreen() {
       second: '2-digit',
       hour12: false // 设置为24小时制
     });
-    const updatedCheckIns = [currentDate, ...checkIns.slice(0, 2)]; // 新的打卡日期放在最前面，只保留最新的三次打卡日期
+    const updatedCheckIns = [currentDate, ...checkIns]; // 新的打卡日期放在最前面，只保留最新的三次打卡日期 
 
     try {
       const storedCheckIns = await AsyncStorage.getItem('checkIns'); // 获取已存储的打卡日期

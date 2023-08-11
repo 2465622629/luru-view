@@ -137,9 +137,6 @@ export default function HomeScreen() {
             console.log("已添加观看奖励");
 
         }
-        if (e.callBackName == "onClose") {
-            console.log("提前关闭广告");
-        }
     }
     //播放音频
     const playSound = () => {
@@ -158,9 +155,7 @@ export default function HomeScreen() {
             const token = await AsyncStorage.getItem('userId');
             let dataForm = new FormData();
             dataForm.append('userId', token);
-            console.log("userId", token);
             const { data: watch } = await watchVideo(dataForm)
-            console.log("观看视频数据");
             console.log(watch.message);
         } catch (e) {
             console.log(e.message);
@@ -275,6 +270,10 @@ export default function HomeScreen() {
             dataForm.append('userId', token);
             let { data: codeInfo } = await checkCode(dataForm)
             if (codeInfo.success) {
+                //刷新验证码
+                getCaptcha()
+                //刷新用户信息
+                getUserInfo()
                 alert('验证成功')
                 return
             }
