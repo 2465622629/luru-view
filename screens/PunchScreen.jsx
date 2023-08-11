@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground, ScrollView, RefreshControl, Button } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground, ScrollView, RefreshControl } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeAppEventEmitter, NativeModules } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -9,7 +9,6 @@ export default function PunchScreen() {
   const APP_KEY = '92D42E2EB1842FAB';
   const REWARD_POS_ID = '3F24470D94B6120114E1F575C3EC8119';
   const INSERT_POS_ID = 'A5C6AAAE8DF4D9F0EEA4982E1C0536C9';
-  const [rewardAd, setRewardAd] = useState(false);
 
   const [data, setData] = useState({
     userData: {},
@@ -39,7 +38,6 @@ export default function PunchScreen() {
       const { data: clockData } = await getClockInfo(formData)
       setData({ ...data, punchData: clockData.data });
       alert(res.message);
-      // setRewardAd(true);
     }
   }
 
@@ -86,15 +84,7 @@ export default function PunchScreen() {
 
   const handlePunch = async () => {
     try {
-      setRewardAd(false);
-      // NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
-      // if (rewardAd) {
-      //   const token = await AsyncStorage.getItem('userId');
-      //   const formData = new FormData();
-      //   formData.append('userId', token);
-      //   const { data: res } = await punch(formData);
-      //   alert(res.message);
-      // }
+      NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
       updateCheckIns();
     }
     catch (error) {
