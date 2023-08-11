@@ -87,7 +87,7 @@ export default function PunchScreen() {
   const handlePunch = async () => {
     try {
       setRewardAd(false);
-      NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
+      // NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
       // if (rewardAd) {
       //   const token = await AsyncStorage.getItem('userId');
       //   const formData = new FormData();
@@ -155,11 +155,16 @@ export default function PunchScreen() {
         </View>
       </View>
 
-      <View style={styles.card}>
+      <View style={{ ...styles.card, maxHeight: 200 }}>
         <Text style={styles.title}>打卡记录</Text>
-        {checkIns.map((checkIn, index) => (
-          <Text key={index} style={styles.content}>{checkIn} 打卡成功</Text>
-        ))}
+        <ScrollView
+          nestedScrollEnabled
+          contentContainerStyle={styles.scrollViewContent}
+        >
+          {checkIns.map((checkIn, index) => (
+            <Text key={index} style={styles.content}>{checkIn} 打卡成功</Text>
+          ))}
+        </ScrollView>
       </View>
 
       <View style={styles.card}>

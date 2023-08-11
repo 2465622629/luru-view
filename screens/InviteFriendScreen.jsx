@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, Image, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getInviteInfo, getInviteCount } from '../service/api'
 
@@ -41,24 +41,23 @@ export default function InviteFriendScreen() {
 
             <Text style={styles.title}>邀请记录</Text>
 
-            {
-                data.invitationList.map((item, index) => {
-                    return (
-                        <View style={styles.card}>
-                            <View style={styles.friendCard}>
-                                <View>
-                                    <Image source={{ uri: item.userAvatar }} style={{ width: 50, height: 50, borderRadius: 30, marginRight: 20 }} />
-                                </View>
-                                <View style={styles.friendInfo}>
-                                    <Text style={styles.infoText}>昵称: {item.username}</Text>
-                                    <Text style={styles.infoText}>邀请码: {item.invitationCode}</Text>
-                                    <Text style={styles.infoText}>注册时间: {item.createdAt}</Text>
-                                </View>
-                            </View>
+            <View style={{ ...styles.card, maxHeight: 300 }}>
+                <FlatList
+                data={data.invitationList}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                    <View style={styles.friendCard}>
+                        <View>
+                            <Image source={{ uri: item.userAvatar }} style={{ width: 50, height: 50, borderRadius: 30, marginRight: 20 }} />
                         </View>
-                    );
-                })
-            }
+                        <View style={styles.friendInfo}>
+                            <Text style={styles.infoText}>昵称: {item.username}</Text>
+                            <Text style={styles.infoText}>邀请码: {item.invitationCode}</Text>
+                            <Text style={styles.infoText}>注册时间: {item.createdAt}</Text>
+                        </View></View>
+                )}  
+                />
+            </View>
 
 
             <Text style={styles.title}>邀请规则</Text>
@@ -104,7 +103,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row', // 水平排列
         alignItems: 'center',
         marginBottom: 8,
-        marginTop: 8,
+        marginTop: 10,
+        //添加下边框
+        borderBottomWidth: 1,
+        borderBottomColor: '#f0f0f0',
     },
     avatar: {
         width: 40,
