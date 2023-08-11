@@ -1,5 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground, ScrollView, RefreshControl, Alert } from 'react-native';
+import {
+    View, Text, StyleSheet, Image,
+    TouchableOpacity,
+    ScrollView, RefreshControl, Alert
+} from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
@@ -18,6 +23,11 @@ export default function PersonalCenterScreen() {
     useEffect(() => {
         initData();
     }, []);
+    const copyText = () => {
+        Clipboard.setString(data.userData.invitationCode);
+        alert('复制成功');
+        // console.log(data.userData.invitationCode);
+    };
 
     // 刷新数据的方法
     const onRefresh = useCallback(() => {
@@ -43,7 +53,7 @@ export default function PersonalCenterScreen() {
     };
 
     const buttons = [
-        { label: "我的团队", name: 'users', onPress: () =>  navigation.navigate('我的团队') },
+        { label: "我的团队", name: 'users', onPress: () => navigation.navigate('我的团队') },
         { label: "钱包", name: 'box', onPress: () => navigation.navigate('我的钱包') },
         { label: "我的订单", name: 'bell', onPress: () => alert("开发中...") },
         { label: "更多功能尽请期待", name: 'battery-charging', onPress: () => console.log("提现管理") },
@@ -52,9 +62,9 @@ export default function PersonalCenterScreen() {
     //录入权限
     const permissions = () => {
         if (data.userData.isFrozen) {
-            return <Text style={{ color: '#f56c6c' }}>已冻结</Text>
+            return <Text style={{ color: '#f56c6c' }}>普通用户</Text>
         } else {
-            return <Text style={{ color: '#67c23a' }}>正常录入</Text>
+            return <Text style={{ color: '#67c23a' }}>超级会员</Text>
         }
     }
     //获取用户信息
@@ -82,13 +92,16 @@ export default function PersonalCenterScreen() {
         >
             <View style={styles.header}>
                 <View style={styles.avatarContainer}>
-                    <Image style={styles.avatar} source={require('../assets/avatar.png')} />
+                    <Image style={styles.avatar} source={{ uri: data.userData.userAvatar }} />
+
                 </View>
                 <View style={styles.userInfo}>
                     <Text style={styles.userName}>{data.userData.username}</Text>
                     <Text style={styles.invitationCode}>
                         邀请码: {data.userData.invitationCode}
-                        <FeatherIcon name="copy" size={15} color="#000" style={styles.copyIcon} />
+                        <TouchableOpacity onPress={copyText}>
+                            <FeatherIcon name="copy" size={20} color="#000" style={styles.copyIcon} />
+                        </TouchableOpacity>
                     </Text>
                     <Text style={styles.permissions}>
                         {permissions()}
@@ -121,7 +134,7 @@ export default function PersonalCenterScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, 
+        flex: 1,
         backgroundColor: '#F0F0F0',
         padding: 20
     },
@@ -133,7 +146,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     userInfo: {
-        flex: 7, 
+        flex: 7,
         marginLeft: 20
     },
     avatar: {
@@ -206,7 +219,7 @@ const styles = StyleSheet.create({
     },
     logoutButtonText: {
         color: '#FFFFFF',
-        fontSize: 16,
+        fontSize: 13,
         fontWeight: 'bold'
     },
     copyIcon: {

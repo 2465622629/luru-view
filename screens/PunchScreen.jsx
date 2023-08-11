@@ -9,58 +9,54 @@ export default function PunchScreen() {
   const REWARD_POS_ID = '3F24470D94B6120114E1F575C3EC8119';
   const INSERT_POS_ID = 'A5C6AAAE8DF4D9F0EEA4982E1C0536C9';
   const [rewardAd, setRewardAd] = useState(false);
- //激励广告 激励结果
- NativeAppEventEmitter.addListener('rewardResult', info => {
-  switch (info.callBackName) {
-      case 'onClick':
-          console.log('onClick');
-          break;
-      case 'onClose':
-          console.log('onClose adId=' + info.adId);
-          break;
-      case 'onReward':
-          console.log('onReward adId=' + info.adId);
-          break;
-      case 'onShow':
-          console.log('onShow adId=' + info.adId);
-          break;
-      case 'onVideoEnd':
-          console.log('onVideoEnd adId=' + info.adId);
-          console.log("观看成功，奖励金币");
-          setRewardAd(true);
-          break;
-      case 'onVideoStart':
-          console.log('onVideoStart');
-          break;
-      case 'onError':
-          console.log(
-              'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
-          );
-          break;
-  }
-});
 
   const [data, setData] = useState({
     userData: {},
-    punchData: {},
+    punchData: {
+      punchCount: 0,
+    },
   });
-  const [checkIns, setCheckIns] = useState([]);
+  const [checkIns, setCheckIns] = useState([]); // 打卡日期
 
 
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
+    const subscription = NativeAppEventEmitter.addListener('rewardResult', handleEvent);
     initData();
+    return () => {
+      subscription.remove();
+    };
   }, []);
+  //处理广告事件
+  const handleEvent = async (e) => {
+    if (e.callBackName == "onReward") {
+      console.log("广告播放完成");
+      const token = await AsyncStorage.getItem('userId');
+      const formData = new FormData();
+      formData.append('userId', token);
+      const { data: res } = await punch(formData);
+      const { data: clockData } = await getClockInfo(formData)
+      setData({ ...data, punchData: clockData.data });
+      alert(res.message);
+      // setRewardAd(true);
+    }
+    if (e.callBackName == "onClose") {
+      console.log("提前关闭广告");
+    }
+  }
 
   const initData = async () => {
     try {
       const token = await AsyncStorage.getItem('userId');
+      if (!token) {
+        navigation.navigate('登录');
+        return;
+      }
       const formData = new FormData();
       formData.append('userId', token);
       const { data: userinfo } = await getUserInfo(formData)
-      const { data: clockData } = await getClockInfo(formData)
-      setData({ userData: userinfo.data, punchData: clockData.data });
+      setData({ ...data, userData: userinfo.data });
     } catch (error) {
       console.log(error.message);
       alert(error.message);
@@ -90,17 +86,18 @@ export default function PunchScreen() {
     }
   };
 
+
   const handlePunch = async () => {
     try {
       setRewardAd(false);
       NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
-      if(rewardAd){
-        const token = await AsyncStorage.getItem('userId');
-        const formData = new FormData();
-        formData.append('userId', token);
-        const { data: res } = await punch(formData);
-        alert(res.message);
-      }
+      // if (rewardAd) {
+      //   const token = await AsyncStorage.getItem('userId');
+      //   const formData = new FormData();
+      //   formData.append('userId', token);
+      //   const { data: res } = await punch(formData);
+      //   alert(res.message);
+      // }
       updateCheckIns();
     }
     catch (error) {
@@ -130,7 +127,7 @@ export default function PunchScreen() {
             <View>
               {/* 图片 */}
               <View style={styles.avatar_box}>
-                <Image style={styles.avatar} source={require('../assets/avatar.png')} />
+                <Image style={styles.avatar} source={{ uri: data.userData.userAvatar }} />
               </View>
               <View style={styles.dec}>
                 <Text>{data.userData.username}</Text>
@@ -147,10 +144,10 @@ export default function PunchScreen() {
           {/* 左侧 */}
           <View>
             <View>
-              <Text>今日累计打卡{data.punchData.punchCount}</Text>
+              {/* <Text>今日累计打卡{data.punchData.punchCount ? data.punchData.punchCount : 0}次</Text> */}
             </View>
             <View>
-              <Text>连续打卡{data.punchData.punchCount}次</Text>
+              <Text>今日打卡共计{data.punchData.punchCount ? data.punchData.punchCount : 0}次</Text>
             </View>
           </View>
           {/* 右侧 */}
@@ -169,9 +166,10 @@ export default function PunchScreen() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.title}>积分规则</Text>
-        <Text style={styles.content}>每次打卡获得10金币</Text>
-        <Text style={styles.content}>连续打卡40次额外奖励40金币</Text>
+        <Text style={styles.title}>打卡规则</Text>
+        <Text style={styles.content}>①早起打卡，每天好心情。</Text>
+        <Text style={styles.content}>②严禁使用脚本，</Text>
+        <Text style={styles.content}>③违规者封号处理，不解释！</Text>
       </View>
     </ScrollView>
   );
@@ -223,15 +221,16 @@ const styles = StyleSheet.create({
   avatar: {
     position: 'absolute',
     left: 0,
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
+    borderRadius: 50,
   },
   dec: {
-    marginLeft: 30,
+    marginLeft: 50,
   },
   avatar_box: {
-    borderRadius: 15,
-    backgroundColor: '#f5f5f5',
+    // borderRadius: 50,
+    // backgroundColor: '#f5f5f5',
   },
   suceess: {
     justifyContent: 'center',

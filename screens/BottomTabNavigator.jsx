@@ -53,7 +53,7 @@ const BottomTabNavigator = () => {
         }}
       />
 
-      <Tab.Screen
+      {/* <Tab.Screen
         name="登录"
         component={LoginScreen}
         options={{
@@ -64,7 +64,7 @@ const BottomTabNavigator = () => {
             />
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };
@@ -75,7 +75,7 @@ const HomeStackScreen = () => {
       <Stack.Screen
         name="首页"
         component={HomeScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: false}} // 隐藏导航栏
       />
       <Stack.Screen name="登录" component={LoginScreen} />
       <Stack.Screen name="注册" component={RegisterScreen} />

@@ -20,6 +20,10 @@ export default function WithdrawScreen() {
 
   const handleWithdraw = async () => {
     const token = await AsyncStorage.getItem('userId');
+    if (data.userData.money < 2) {
+      alert('余额不足2元');
+      return;
+    }
     const formData = new FormData();
     formData.append('userId', token);
     formData.append('amount', data.userData.money);
@@ -123,8 +127,8 @@ export default function WithdrawScreen() {
             </View>
             <View style={styles.column}>
               <Text style={styles.title}>支付宝</Text>
-              <Text style={styles.content}>账号{data.userData.phone.slice(-10,-7)}xxx{data.userData.phone.slice(-4)}</Text>
-              {/* <Text style={styles.content}>账号{data.userData.phone}</Text> */}
+              {/* <Text style={styles.content}>账号{data.userData.phone.slice(-10,-7)}xxx{data.userData.phone.slice(-4)}</Text> */}
+              <Text style={styles.content}>账号{data.userData.phone}</Text>
             </View>
             <Icon name="check-square" size={20} color="#22c55e" />
           </View> 

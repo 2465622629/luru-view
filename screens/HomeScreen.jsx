@@ -14,6 +14,7 @@ import { NativeAppEventEmitter, NativeModules } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Sound from 'react-native-sound';
+import { watchVideo, addIntegral, checkCode, exchange } from '../service/api';
 
 const commonStyles = StyleSheet.create({
     container: {
@@ -98,7 +99,6 @@ export default function HomeScreen() {
     const navigation = useNavigation();
     const [adIsSuccess, setAdIsSuccess] = useState(false);
     //是否可以提供奖励
-    const [isReward, setIsReward] = useState(false);
 
     const APP_KEY = '92D42E2EB1842FAB';
     const REWARD_POS_ID = '3F24470D94B6120114E1F575C3EC8119';
@@ -125,15 +125,19 @@ export default function HomeScreen() {
         initData()
         return () => {
             subscription.remove();
-          };
+        };
     }, [])
 
     //处理广告事件
     const handleEvent = (e) => {
-        if(e.callBackName=="onVideoEnd"){
+        if (e.callBackName == "onReward") {
             console.log("广告结束");
+            addWatchVied()
+            add_integral()
+            console.log("已添加观看奖励");
+
         }
-        if(e.callBackName=="onClose"){
+        if (e.callBackName == "onClose") {
             console.log("提前关闭广告");
         }
     }
@@ -153,10 +157,13 @@ export default function HomeScreen() {
         try {
             const token = await AsyncStorage.getItem('userId');
             let dataForm = new FormData();
-            dataForm.append('id', token);
-            let data = await axiosInstance.post('/user/watchVideo', dataForm)
+            dataForm.append('userId', token);
+            console.log("userId", token);
+            const { data: watch } = await watchVideo(dataForm)
+            console.log("观看视频数据");
+            console.log(watch.message);
         } catch (e) {
-            alert(e.message)
+            console.log(e.message);
         }
     }
     //金币兑换时间
@@ -192,28 +199,21 @@ export default function HomeScreen() {
             const token = await AsyncStorage.getItem('userId');
             let dataForm = new FormData();
             dataForm.append('id', token);
-            let data = await axiosInstance.post('/user/exchange')
-            if (data.data.success) {
-                alert('兑换成功')
-                getUserInfo()
-            } else {
-                alert('兑换失败,积分不足')
-            }
+            let data = await exchange(dataForm)
+            alert(data.data.message)
         } catch (e) {
             alert(e.message)
         }
     }
     //为用户增加积分
-    const addIntegral = async () => {
+    const add_integral = async () => {
         try {
             const token = await AsyncStorage.getItem('userId');
             let dataForm = new FormData();
-            dataForm.append('id', token);
-            dataForm.append('integral', 10);
-            let data = await axiosInstance.post('/user/addIntegral', dataForm)
-            if (data.data.success) {
-                getUserInfo()
-            }
+            dataForm.append('userId', token);
+            dataForm.append('integral', 1);
+            let { data: integralData } = await addIntegral(dataForm)
+            console.log(integralData);
         } catch (e) {
             alert(e.message)
         }
@@ -233,40 +233,6 @@ export default function HomeScreen() {
                 break;
         }
     });
-    //激励广告 激励结果
-
-    // const subscription = NativeAppEventEmitter.addListener('rewardResult', info => {
-    //     switch (info.callBackName) {
-    //         case 'onClick':
-    //             console.log('onClick');
-    //             break;
-    //         case 'onClose':
-    //             console.log('onClose adId=' + info.adId);
-    //             break;
-    //         case 'onReward':
-    //             console.log('onReward adId=' + info.adId);
-    //             break;
-    //         case 'onShow':
-    //             console.log('onShow adId=' + info.adId);
-    //             break;
-    //         case 'onVideoEnd':
-    //             console.log('onVideoEnd adId=' + info.adId);
-    //             // addIntegral()
-    //             // addWatchVied()
-    //             alert("完成任务,获得奖励");
-    //             console.log("观看成功，奖励金币");
-    //             subscription.remove();
-    //             break;
-    //         case 'onVideoStart':
-    //             console.log('onVideoStart');
-    //             break;
-    //         case 'onError':
-    //             console.log(
-    //                 'onError errorCode=' + info.errorCode + ' errorMsg=' + info.errorMsg,
-    //             );
-    //             break;
-    //     }
-    // });
 
     //插入结果
     NativeAppEventEmitter.addListener('insertResult', info => {
@@ -297,6 +263,7 @@ export default function HomeScreen() {
     //校验验证码
     const checkCaptcha = async () => {
         try {
+            const token = await AsyncStorage.getItem('userId');
             // 非空判断
             if (captcha === '') {
                 alert('请输入验证码')
@@ -305,16 +272,13 @@ export default function HomeScreen() {
             //创建一个dataform对象
             let dataForm = new FormData();
             dataForm.append('captcha', captcha);
-            dataForm.append('userId', 1);
-            let data = await axiosInstance.post('/captcha/verifyCaptcha', dataForm)
-            if (data.data.success) {
-                getUserInfo()
-                alert('恭喜,验证通过奖励1积分')
-                //获取验证码
-                getCaptcha()
-            } else {
-                alert('验证码错误，再试一下吧')
+            dataForm.append('userId', token);
+            let { data: codeInfo } = await checkCode(dataForm)
+            if (codeInfo.success) {
+                alert('验证成功')
+                return
             }
+            alert(codeInfo.message)
         } catch (e) {
             alert(e.message)
         }
@@ -380,7 +344,7 @@ export default function HomeScreen() {
                     onPress={checkCaptcha}
                 >
                     <Animated.View style={[commonStyles.button, { transform: [{ scale: animation }] }]}>
-                        <Text style={commonStyles.buttonText}>验证</Text>
+                        <Text style={commonStyles.buttonText}>录入</Text>
                     </Animated.View>
                 </TouchableOpacity>
 
@@ -421,6 +385,14 @@ export default function HomeScreen() {
                 </View>
                 <View>
                     <Text style={commonStyles.msg}>新会员用户必看</Text>
+                    
+                    <Text style={commonStyles.msg}>注意事项：</Text>
+                    <Text style={commonStyles.bullet}>1. 1000积分=1元。</Text>
+                    <Text style={commonStyles.bullet}>直属好友打码1000积分提成100积分</Text>
+                    <Text style={commonStyles.bullet}>2.批量注册账户/多个账户封号ip处理 </Text>
+                    <Text style={commonStyles.bullet}>3.脚本、不正规录入封号不解释 </Text>
+
+                    {/* <Text style={commonStyles.msg}>新会员用户必看</Text>
                     <Text style={commonStyles.msg}>积分价格：</Text>
                     <Text style={commonStyles.bullet}>1. 1000积分=1元。</Text>
                     <Text style={commonStyles.bullet}>2. 直属好友打码10000积分提成1000积分</Text>
@@ -437,7 +409,7 @@ export default function HomeScreen() {
                     <Text style={commonStyles.bullet}>4.不正当违规录入封号处理。</Text>
                     <Text style={commonStyles.bullet}>1.脚本模拟器多开账户封号处理</Text>
                     <Text style={commonStyles.msg}>注意事项：</Text>
-                    <Text style={commonStyles.bullet}>1. 三天打卡视频20次保级,不满20次,掉级没有录入,需要补级！！</Text>
+                    <Text style={commonStyles.bullet}>1. 三天打卡视频20次保级,不满20次,掉级没有录入,需要补级！！</Text> */}
                 </View>
             </View>
         </ScrollView>

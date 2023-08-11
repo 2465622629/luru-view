@@ -34,6 +34,8 @@ export default function LoginScreen() {
             const userId = jwt.user.id;
             await AsyncStorage.setItem('userId', userId.toString());
             navigation.navigate('首页');
+        } else {
+            Alert.alert('登录失败', response.data.message);
         }
     };
 

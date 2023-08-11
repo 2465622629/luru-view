@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getInviteInfo } from '../service/api'
+import { getInviteInfo, getInviteCount } from '../service/api'
 
 export default function InviteFriendScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const [data, setData] = useState({
         invitationList: [],
+        invitationCount: 0,
     });
+    useEffect(() => {
+        initData();
+    }, []);
     const onRefresh = async () => {
         setRefreshing(true);
         try {
@@ -24,7 +27,9 @@ export default function InviteFriendScreen() {
         let dataForm = new FormData();
         dataForm.append('userId', token);
         const { data: invitationList } = await getInviteInfo(dataForm);
-        setData({ invitationList: invitationList.data });
+        const { data: invitationCount } = await getInviteCount(dataForm);
+        setData({ invitationList: invitationList.data, invitationCount: invitationCount.data });
+
     };
 
 
@@ -41,7 +46,9 @@ export default function InviteFriendScreen() {
                     return (
                         <View style={styles.card}>
                             <View style={styles.friendCard}>
-                                <View style={styles.avatar} />
+                                <View>
+                                    <Image source={{ uri: item.userAvatar }} style={{ width: 50, height: 50, borderRadius: 30, marginRight: 20 }} />
+                                </View>
                                 <View style={styles.friendInfo}>
                                     <Text style={styles.infoText}>昵称: {item.username}</Text>
                                     <Text style={styles.infoText}>邀请码: {item.invitationCode}</Text>
@@ -57,17 +64,20 @@ export default function InviteFriendScreen() {
             <Text style={styles.title}>邀请规则</Text>
             <View style={styles.card}>
                 <Text style={styles.ruleText}>
-                    按照规则邀请好友即可获得奖励。具体规则如下：
-                    1. 邀请好友成功注册后，你将获得一定数量的积分奖励；
-                    2. 奖励积分可以用于兑换商品或提升会员等级；
-                    3. 邀请越多，奖励越丰厚。
+                    按照规则邀请好友即可获得奖励。
+                    具体规则如下：
+                    1.邀请好友成功注册后，你将获得一定数量的金币奖励；
+                    邀请一位奖励10金币，以此类推
+                    邀请越多，金币越多
+                    打卡打满40次，系统再赠送10金币
+                    2.奖励金币可以用于兑换时间或提升会员等级；
                 </Text>
             </View>
 
             <Text style={styles.title}>邀请好友统计</Text>
             <View style={styles.card}>
-                <Text style={styles.statText}>邀请总人数: 10人</Text>
-                <Text style={styles.statText}>已获得奖励: 100积分</Text>
+                <Text style={styles.statText}>邀请总人数: {data.invitationCount}人</Text>
+                <Text style={styles.statText}>已获得奖励: {data.invitationCount * 50}金币</Text>
             </View>
         </ScrollView>
     );
