@@ -17,7 +17,7 @@ const BottomTabNavigator = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name="首页"
+        name="录入"
         component={HomeStackScreen}
         options={{
           tabBarIcon: ({ focused }) => (
@@ -73,7 +73,7 @@ const HomeStackScreen = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="首页"
+        name="录入"
         component={HomeScreen}
         options={{ headerShown: false}} // 隐藏导航栏
       />

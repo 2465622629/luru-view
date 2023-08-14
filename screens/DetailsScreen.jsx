@@ -62,7 +62,7 @@ export default function PersonalCenterScreen() {
     //录入权限
     const permissions = () => {
         if (data.userData.isFrozen) {
-            return <Text style={{ color: '#f56c6c' }}>普通用户</Text>
+            return <Text style={{ color: '#f56c6c' }}>普通会员</Text>
         } else {
             return <Text style={{ color: '#67c23a' }}>超级会员</Text>
         }
@@ -93,12 +93,11 @@ export default function PersonalCenterScreen() {
             <View style={styles.header}>
                 <View style={styles.avatarContainer}>
                     <Image style={styles.avatar} source={{ uri: data.userData.userAvatar }} />
-
                 </View>
                 <View style={styles.userInfo}>
                     <Text style={styles.userName}>{data.userData.username}</Text>
                     <Text style={styles.invitationCode}>
-                        邀请码: {data.userData.invitationCode}
+                        <Text>邀请码a: {data.userData.invitationCode}</Text>
                         <TouchableOpacity onPress={copyText}>
                             <FeatherIcon name="copy" size={20} color="#000" style={styles.copyIcon} />
                         </TouchableOpacity>
@@ -174,6 +173,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff7e8',
     },
     invitationCode: {
+        flex: 1,
+        //排列方式
+        flexDirection: 'row',
+        alignItems: 'center',
         color: '#333',
         fontSize: 16,
     },

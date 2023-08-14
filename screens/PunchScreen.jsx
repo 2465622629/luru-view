@@ -5,10 +5,8 @@ import { NativeAppEventEmitter, NativeModules } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { getUserInfo, getClockInfo, punch } from '../service/api'
+import { APP_KEY, REWARD_POS_ID, INSERT_POS_ID } from '../config/ADconfig';
 export default function PunchScreen() {
-  const APP_KEY = '92D42E2EB1842FAB';
-  const REWARD_POS_ID = '3F24470D94B6120114E1F575C3EC8119';
-  const INSERT_POS_ID = 'A5C6AAAE8DF4D9F0EEA4982E1C0536C9';
 
   const [data, setData] = useState({
     userData: {},
@@ -19,17 +17,22 @@ export default function PunchScreen() {
   const [checkIns, setCheckIns] = useState([]); // 打卡日期
   const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
+  //是否成功
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
+    //取消监听 rewardResult 事件
+
     const subscription = NativeAppEventEmitter.addListener('rewardResult', handleEvent);
     initData();
     return () => {
+      console.log("打卡 移除监听");
       subscription.remove();
     };
   }, []);
   //处理广告事件
   const handleEvent = async (e) => {
-    if (e.callBackName == "onReward") {
+    if (e.callBackName == "onClose") {
       console.log("广告播放完成");
       const token = await AsyncStorage.getItem('userId');
       const formData = new FormData();
@@ -39,6 +42,7 @@ export default function PunchScreen() {
       setData({ ...data, punchData: clockData.data });
       alert(res.message);
     }
+    console.log(e.callBackName);
   }
 
   const initData = async () => {

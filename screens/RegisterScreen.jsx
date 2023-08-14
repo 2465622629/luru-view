@@ -100,6 +100,10 @@ export default function RegisterScreen() {
           onChangeText={setPhoneNumber}
         />
       </View>
+      <View>
+        <Text style={{ color: '#fa541c', fontSize: 16 }}>1.用户名字尽量中文名字 ❗️</Text>
+        <Text style={{ color: '#fa541c', fontSize: 16 }}>2.注册时的手机号必须是支付宝账号，一旦注册自动绑定支付宝账号，如注册时的手机号没有注册支付宝，提现不到账！没办法提现❗️❗️</Text>
+      </View>
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegistration}>
         <Text style={styles.buttonText}>注册</Text>
@@ -117,7 +121,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 150,
-    height: 150,
+    height: 70,
   },
   heading: {
     fontSize: 24,

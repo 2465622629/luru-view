@@ -23,6 +23,11 @@ export async function watchVideo(body) {
 export async function addIntegral(body) {
     return await axiosInstance.post("/user/addIntegral", body);
 }
+
+//添加金币
+export async function addCoins(body) {
+    return await axiosInstance.post("/user/addCoins", body);
+}
 //积分兑换余额
 export async function exchange(body) {
     return await axiosInstance.post("/user/exchange", body);

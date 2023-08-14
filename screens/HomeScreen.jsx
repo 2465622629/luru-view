@@ -14,7 +14,8 @@ import { NativeAppEventEmitter, NativeModules } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Sound from 'react-native-sound';
-import { watchVideo, addIntegral, checkCode, exchange } from '../service/api';
+import { watchVideo, checkCode, exchange, addCoins } from '../service/api';
+import { APP_KEY, REWARD_POS_ID, INSERT_POS_ID } from '../config/ADconfig';
 
 const commonStyles = StyleSheet.create({
     container: {
@@ -47,8 +48,8 @@ const commonStyles = StyleSheet.create({
         placeholderTextColor: '#ccc',
     },
     customButton: {
-        width: 50,
-        backgroundColor: 'rgb(73, 187, 213)',
+        width: 90,
+        backgroundColor: '#ff4d4f',
         paddingVertical: 5,
         paddingHorizontal: 10,
         borderRadius: 5,
@@ -61,13 +62,16 @@ const commonStyles = StyleSheet.create({
     },
     msg: {
         fontWeight: 'bold',
+        fontSize: 16,
+        color: '#fa541c',
     },
     bullet: {
         marginLeft: 10,
+        fontSize: 14,
     },
     btn_txt: {
         fontWeight: 'bold',
-        color: 'rgb(73, 187, 213)',
+        color: '#ff4d4f',
     },
     capbox: {
         flexDirection: 'row',
@@ -76,7 +80,7 @@ const commonStyles = StyleSheet.create({
         padding: 10,
     },
     button: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#4096ff',
         paddingVertical: 10,
         paddingHorizontal: 40,
         borderRadius: 8,
@@ -88,6 +92,9 @@ const commonStyles = StyleSheet.create({
         alignSelf: 'center',
         marginVertical: 10,
     },
+    disabledButton: {
+        backgroundColor: '#ccc',
+    },
 });
 
 export default function HomeScreen() {
@@ -98,17 +105,22 @@ export default function HomeScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const navigation = useNavigation();
     const [adIsSuccess, setAdIsSuccess] = useState(false);
-    //是否可以提供奖励
-
-    const APP_KEY = '92D42E2EB1842FAB';
-    const REWARD_POS_ID = '3F24470D94B6120114E1F575C3EC8119';
-    const INSERT_POS_ID = 'A5C6AAAE8DF4D9F0EEA4982E1C0536C9';
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         initData()
         setRefreshing(false);
     }, []);
+
+    //adIsSuccess 变为true时，播放广告
+    useEffect(async () => {
+        if (adIsSuccess) {
+            await addWatchVied()
+            await add_coins()
+            console.log("已添加观看奖励");
+            setAdIsSuccess(false)
+        }
+    }, [adIsSuccess])
     const getCaptcha = async () => {
         try {
             let data = await axiosInstance.post('/captcha/getCaptcha')
@@ -119,24 +131,22 @@ export default function HomeScreen() {
     }
     useEffect(() => {
         const subscription = NativeAppEventEmitter.addListener('rewardResult', handleEvent);
-        if (!adIsSuccess) {
-            initAd()
-        }
+        // if (!adIsSuccess) {
+        //     initAd()
+        // }
         initData()
         return () => {
+            console.log("首页移除监听");
             subscription.remove();
         };
     }, [])
 
     //处理广告事件
-    const handleEvent = (e) => {
+    const handleEvent = async (e) => {
         if (e.callBackName == "onReward") {
-            console.log("广告结束");
-            addWatchVied()
-            add_integral()
-            console.log("已添加观看奖励");
-
+            setAdIsSuccess(true)
         }
+        console.log(e.callBackName);
     }
     //播放音频
     const playSound = () => {
@@ -201,13 +211,13 @@ export default function HomeScreen() {
         }
     }
     //为用户增加积分
-    const add_integral = async () => {
+    const add_coins = async () => {
         try {
             const token = await AsyncStorage.getItem('userId');
             let dataForm = new FormData();
             dataForm.append('userId', token);
-            dataForm.append('integral', 1);
-            let { data: integralData } = await addIntegral(dataForm)
+            dataForm.append('coins', 1);
+            let { data: integralData } = await addCoins(dataForm)
             console.log(integralData);
         } catch (e) {
             alert(e.message)
@@ -222,9 +232,6 @@ export default function HomeScreen() {
                 break;
             case 'onSuccess':
                 console.log('初始化成功');
-                setAdIsSuccess(true)
-                NativeModules.AdUtilsModule.initRewardAd(REWARD_POS_ID);
-                NativeModules.AdUtilsModule.initInsertAd(INSERT_POS_ID);
                 break;
         }
     });
@@ -248,9 +255,9 @@ export default function HomeScreen() {
                 break;
         }
     });
-    const initAd = () => {
-        NativeModules.AdUtilsModule.initAd(APP_KEY);
-    };
+    // const initAd = () => {
+    //     NativeModules.AdUtilsModule.initAd(APP_KEY);
+    // };
     const showRewardAd = () => {
         NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
     };
@@ -274,7 +281,9 @@ export default function HomeScreen() {
                 getCaptcha()
                 //刷新用户信息
                 getUserInfo()
-                alert('验证成功')
+                //播放音频
+                playSound()
+                alert(codeInfo.message)
                 return
             }
             alert(codeInfo.message)
@@ -343,23 +352,26 @@ export default function HomeScreen() {
                     onPress={checkCaptcha}
                 >
                     <Animated.View style={[commonStyles.button, { transform: [{ scale: animation }] }]}>
-                        <Text style={commonStyles.buttonText}>录入</Text>
+                        <Text style={commonStyles.buttonText}>验证</Text>
                     </Animated.View>
                 </TouchableOpacity>
 
                 <View style={commonStyles.cont_box}>
-                    <Text>{`当前积分:${userData.integral === null ? 0 : userData.integral}`}</Text>
+                    <Text>{`积分:${userData.integral === null ? 0 : userData.integral}`}</Text>
                     <TouchableOpacity
                         onPress={integralToMoney}
                     >
-                        <Text style={commonStyles.btn_txt}>立即兑换</Text>
+                        <Text style={commonStyles.btn_txt}>点击兑换</Text>
                     </TouchableOpacity>
                 </View>
 
 
                 <View style={commonStyles.cont_box}>
-                    <Text>{`当前金币:${userData.coins === null ? 0 : userData.coins}`}  </Text>
-                    <Text>{userData.endTime}到期</Text>
+                    <Text>{`金币:${userData.coins === null ? 0 : userData.coins}`}  </Text>
+                    <Text>
+                        <Text style={{ color: '#000' }}>{userData.endTime}</Text>
+                        到期
+                    </Text>
                     <TouchableOpacity
                         onPress={moneyToTime}
                     >
@@ -369,46 +381,38 @@ export default function HomeScreen() {
                 <View style={commonStyles.cont_box}>
                     <Text>{`观看视频(${userData.watchVideoCount === null ? 0 : userData.watchVideoCount}/50次)`}</Text>
                     <TouchableOpacity
-                        style={commonStyles.customButton}
+                        style={[commonStyles.customButton, userData.watchVideoCount >= 50 && commonStyles.disabledButton]}
                         onPress={showRewardAd}
+                        disabled={userData.watchVideoCount >= 50} //判断是否可以点击
                     >
-                        <Text style={commonStyles.buttonText}>+1</Text>
+                        <Text
+                            style={commonStyles.buttonText}
+                        >{userData.watchVideoCount >= 50 ? "已完成" : "+1"}</Text>
                     </TouchableOpacity>
                 </View>
 
                 <View style={commonStyles.cont_box}>
-                    <Text>邀请好友（不限次数）</Text>
+                    <Text>邀请好友（上不封顶）</Text>
                     <TouchableOpacity style={commonStyles.customButton}>
                         <Text style={commonStyles.buttonText}>+10</Text>
                     </TouchableOpacity>
                 </View>
-                <View>
-                    <Text style={commonStyles.msg}>新会员用户必看</Text>
-                    
-                    <Text style={commonStyles.msg}>注意事项：</Text>
-                    <Text style={commonStyles.bullet}>1. 1000积分=1元。</Text>
-                    <Text style={commonStyles.bullet}>直属好友打码1000积分提成100积分</Text>
-                    <Text style={commonStyles.bullet}>2.批量注册账户/多个账户封号ip处理 </Text>
-                    <Text style={commonStyles.bullet}>3.脚本、不正规录入封号不解释 </Text>
+                <View style={{ marginLeft: 10 }}>
+                    <Text style={commonStyles.msg}>新会员须知 :</Text>
+                    <Text style={commonStyles.bullet}>1.新会员注册无录入权限❗️
+                        （找客服开通）</Text>
+                    <Text style={commonStyles.bullet}>2.开通后用金币兑换录入时间、
+                        金币自由交易</Text>
 
-                    {/* <Text style={commonStyles.msg}>新会员用户必看</Text>
-                    <Text style={commonStyles.msg}>积分价格：</Text>
-                    <Text style={commonStyles.bullet}>1. 1000积分=1元。</Text>
-                    <Text style={commonStyles.bullet}>2. 直属好友打码10000积分提成1000积分</Text>
-                    <Text style={commonStyles.bullet}>3. 徒孙打码10000码积分提成100积分-以此类推。</Text>
-                    <Text style={commonStyles.msg}>提现规则:</Text>
-                    <Text style={commonStyles.bullet}>1.2元起可提现。</Text>
-                    <Text style={commonStyles.bullet}>2.20元以内三天到账</Text>
-                    <Text style={commonStyles.bullet}>3.20元以上隔月到账。</Text>
-                    <Text style={commonStyles.bullet}>4.20元月底去提现次月21-30号到账。</Text>
-                    <Text style={commonStyles.msg}>违规录入:</Text>
-                    <Text style={commonStyles.bullet}>1.脚本模拟器多开账户封号处理</Text>
-                    <Text style={commonStyles.bullet}>2. 脚本模拟器打卡看视频封号处理。</Text>
-                    <Text style={commonStyles.bullet}>3.批量注册账户/多个账户封号ip处理。</Text>
-                    <Text style={commonStyles.bullet}>4.不正当违规录入封号处理。</Text>
-                    <Text style={commonStyles.bullet}>1.脚本模拟器多开账户封号处理</Text>
-                    <Text style={commonStyles.msg}>注意事项：</Text>
-                    <Text style={commonStyles.bullet}>1. 三天打卡视频20次保级,不满20次,掉级没有录入,需要补级！！</Text> */}
+                    <Text style={{ ...commonStyles.msg, marginLeft: 5 }}>注意事项：</Text>
+                    <Text style={commonStyles.bullet}>1.  1000积分 = 10元 </Text>
+                    <Text style={commonStyles.bullet}>直属好友1000积分提成100积分</Text>
+                    <Text style={commonStyles.bullet}>2.批量注册账号、一个人多个账号者封号处理 !!! </Text>
+                    <Text style={commonStyles.bullet}>3.脚本、违规录入封号不解释❗️</Text>
+
+                    <Text style={{ ...commonStyles.msg, marginLeft: 5 }}>邀请好友须知：</Text>
+                    <Text style={commonStyles.bullet}>1、邀请一个人奖励10金币. </Text>
+                    <Text style={commonStyles.bullet}>2、恶意注册邀请,直接封号!!! </Text>
                 </View>
             </View>
         </ScrollView>

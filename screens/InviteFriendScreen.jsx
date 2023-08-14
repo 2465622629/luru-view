@@ -76,7 +76,7 @@ export default function InviteFriendScreen() {
             <Text style={styles.title}>邀请好友统计</Text>
             <View style={styles.card}>
                 <Text style={styles.statText}>邀请总人数: {data.invitationCount}人</Text>
-                <Text style={styles.statText}>已获得奖励: {data.invitationCount * 50}金币</Text>
+                <Text style={styles.statText}>已获得奖励: {data.invitationCount * 10}金币</Text>
             </View>
         </ScrollView>
     );
