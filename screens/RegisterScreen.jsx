@@ -103,6 +103,7 @@ export default function RegisterScreen() {
       <View>
         <Text style={{ color: '#fa541c', fontSize: 16 }}>1.用户名字尽量中文名字 ❗️</Text>
         <Text style={{ color: '#fa541c', fontSize: 16 }}>2.注册时的手机号必须是支付宝账号，一旦注册自动绑定支付宝账号，如注册时的手机号没有注册支付宝，提现不到账！没办法提现❗️❗️</Text>
+        <Text style={{ color: '#fa541c', fontSize: 16 }}>3.恶意批量注册将清空所有有关账号数据 请悉知</Text>
       </View>
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegistration}>
