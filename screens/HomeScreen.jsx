@@ -7,7 +7,7 @@ import {
     View,
     Image,
     Animated,
-    RefreshControl, ScrollView
+    RefreshControl, ScrollView, Alert
 } from "react-native";
 import axiosInstance from "../utils/comreqtool";
 import { NativeAppEventEmitter, NativeModules } from 'react-native';
@@ -113,14 +113,24 @@ export default function HomeScreen() {
     }, []);
 
     //adIsSuccess 变为true时，播放广告
-    useEffect(async () => {
-        if (adIsSuccess) {
-            await addWatchVied()
-            await add_coins()
-            console.log("已添加观看奖励");
-            setAdIsSuccess(false)
-        }
-    }, [adIsSuccess])
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         if (adIsSuccess) {
+    //             await addWatchVied();
+    //             await add_coins();
+    //             console.log("首页已添加观看奖励");
+    //             Alert.alert('提示', '观看视频成功')
+    //             setAdIsSuccess(false);
+    //         }
+    //     };
+
+    //     fetchData();
+
+    //     return () => {
+    //         // 在组件卸载或重新渲染时执行清理逻辑
+    //         // 例如：取消异步操作，清除定时器等
+    //     };
+    // }, [adIsSuccess]);
     const getCaptcha = async () => {
         try {
             let data = await axiosInstance.post('/captcha/getCaptcha')
@@ -130,21 +140,22 @@ export default function HomeScreen() {
         }
     }
     useEffect(() => {
-        const subscription = NativeAppEventEmitter.addListener('rewardResult', handleEvent);
-        // if (!adIsSuccess) {
-        //     initAd()
-        // }
+        NativeModules.AdUtilsModule.showInsert() //展示插屏广告
         initData()
         return () => {
-            console.log("首页移除监听");
-            subscription.remove();
+            NativeAppEventEmitter.removeAllListeners('rewardResult');
         };
+        // NativeModules.AdUtilsModule.showInsert(); //插屏广告
     }, [])
 
     //处理广告事件
     const handleEvent = async (e) => {
         if (e.callBackName == "onReward") {
-            setAdIsSuccess(true)
+            await addWatchVied();
+            await add_coins();
+            console.log("首页已添加观看奖励");
+            Alert.alert('提示', '观看视频成功')
+            // setAdIsSuccess(true)
         }
         console.log(e.callBackName);
     }
@@ -255,10 +266,9 @@ export default function HomeScreen() {
                 break;
         }
     });
-    // const initAd = () => {
-    //     NativeModules.AdUtilsModule.initAd(APP_KEY);
-    // };
     const showRewardAd = () => {
+        NativeAppEventEmitter.removeAllListeners('rewardResult');
+        NativeAppEventEmitter.addListener('rewardResult', handleEvent);
         NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
     };
     //广告
@@ -282,7 +292,7 @@ export default function HomeScreen() {
                 //刷新用户信息
                 getUserInfo()
                 //播放音频
-                playSound()
+                // playSound()
                 alert(codeInfo.message)
                 return
             }

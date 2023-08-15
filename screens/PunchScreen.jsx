@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground, ScrollView, RefreshControl, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeAppEventEmitter, NativeModules } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -21,26 +21,49 @@ export default function PunchScreen() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    //取消监听 rewardResult 事件
-
-    const subscription = NativeAppEventEmitter.addListener('rewardResult', handleEvent);
+    NativeModules.AdUtilsModule.showInsert() //展示插屏广告
     initData();
     return () => {
-      console.log("打卡 移除监听");
-      subscription.remove();
-    };
+      NativeAppEventEmitter.removeAllListeners('rewardResult');
+    }
   }, []);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     if (isSuccess) {
+  //       console.log("打卡已添加奖励");
+  //       const token = await AsyncStorage.getItem('userId');
+  //       const formData = new FormData();
+  //       formData.append('userId', token);
+  //       const { data: res } = await punch(formData);
+  //       const { data: clockData } = await getClockInfo(formData)
+  //       setData({ ...data, punchData: clockData.data });
+  //       Alert.alert("提示", res.message);
+  //       setIsSuccess(false);
+  //     }
+  //   };
+
+  //   fetchData();
+
+  //   return () => {
+  //     // 在组件卸载或重新渲染时执行清理逻辑
+  //     // 例如：取消异步操作，清除定时器等
+  //   };
+  // }, [isSuccess]);
+
   //处理广告事件
-  const handleEvent = async (e) => {
-    if (e.callBackName == "onClose") {
-      console.log("广告播放完成");
+  const punchHandleEvent = async (e) => {
+    if (e.callBackName == "onReward") {
       const token = await AsyncStorage.getItem('userId');
       const formData = new FormData();
       formData.append('userId', token);
       const { data: res } = await punch(formData);
       const { data: clockData } = await getClockInfo(formData)
       setData({ ...data, punchData: clockData.data });
-      alert(res.message);
+      Alert.alert("提示", res.message);
+      updateCheckIns();
+      Alert.alert("提示", "打卡成功");
+      // setIsSuccess(true);
     }
     console.log(e.callBackName);
   }
@@ -55,7 +78,8 @@ export default function PunchScreen() {
       const formData = new FormData();
       formData.append('userId', token);
       const { data: userinfo } = await getUserInfo(formData)
-      setData({ ...data, userData: userinfo.data });
+      const { data: clockData } = await getClockInfo(formData)
+      setData({ ...data, punchData: clockData.data, userData: userinfo.data });
     } catch (error) {
       console.log(error.message);
       alert(error.message);
@@ -88,11 +112,12 @@ export default function PunchScreen() {
 
   const handlePunch = async () => {
     try {
+      NativeAppEventEmitter.removeAllListeners('rewardResult');
+      NativeAppEventEmitter.addListener('rewardResult', punchHandleEvent);
       NativeModules.AdUtilsModule.showRewardAd(REWARD_POS_ID);
-      updateCheckIns();
     }
     catch (error) {
-      alert(error.message);
+      Alert.alert("错误", error.message);
     }
   };
 
@@ -143,8 +168,8 @@ export default function PunchScreen() {
           </View>
           {/* 右侧 */}
           <View>
-            <View><Text>金币</Text></View>
-            <View><Text>{data.userData.coins}</Text></View>
+            <View><Text>积分</Text></View>
+            <View><Text>{data.userData.integral}</Text></View>
           </View>
         </View>
       </View>
@@ -163,9 +188,9 @@ export default function PunchScreen() {
 
       <View style={styles.card}>
         <Text style={styles.title}>打卡规则</Text>
-        <Text style={styles.content}>①早起打卡，每天好心情。</Text>
-        <Text style={styles.content}>②严禁使用脚本，</Text>
-        <Text style={styles.content}>③违规者封号处理，不解释！</Text>
+        <Text style={styles.content}> 1、严禁使用脚本。</Text>
+        <Text style={styles.content}> 2、违规者封号处理，不解释❗️</Text>
+        <Text style={styles.content}> 3、打卡越多奖励越多✅</Text>
       </View>
     </ScrollView>
   );

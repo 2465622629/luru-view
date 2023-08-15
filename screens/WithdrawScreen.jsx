@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, Button } from 'react-native';
+import { View, Text, TextInput, StyleSheet,FlatList, TouchableOpacity, ScrollView, RefreshControl, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AliIcon from 'react-native-vector-icons/AntDesign';
 
@@ -86,33 +86,34 @@ export default function WithdrawScreen() {
       </View>
       <View>
         <Text style={styles.topTitle}>提现记录</Text>
-        {
-          data.withdrawInfo.map((item, index) => {
-            return (
-              <View style={styles.card}>
-                <View style={styles.row}>
-                  <View style={styles.iconContainer}>
-                    <View style={styles.iconBackground}>
-                      <Icon
-                        name={item.status === 0 ? "wrench" : item.status === 1 ? "check" : "times-circle-o"}
-                        size={24}
-                        color="#ffffff"
-                      />
-                    </View>
+        <FlatList
+        style={{maxHeight: 300 }}
+          data={data.withdrawInfo}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <View style={styles.row}>
+                <View style={styles.iconContainer}>
+                  <View style={styles.iconBackground}>
+                    <Icon
+                      name={item.status === 0 ? "wrench" : item.status === 1 ? "check" : "times-circle-o"}
+                      size={24}
+                      color="#ffffff"
+                    />
                   </View>
-                  <View style={styles.column}>
-                    <Text style={styles.title}>
-                      {item.status === 0 ? "审核中" : item.status === 1 ? "提现成功" : "提现失败"}
-                    </Text>
-                    <Text style={styles.content}>{item.createdAt}</Text>
-
-                  </View>
-                  <Text style={styles.titleMoney}>￥{item.amount}</Text>
                 </View>
+                <View style={styles.column}>
+                  <Text style={styles.title}>
+                    {item.status === 0 ? "审核中" : item.status === 1 ? "提现成功" : "提现失败"}
+                  </Text>
+                  <Text style={styles.content}>{item.createdAt}</Text>
+                </View>
+                <Text style={styles.titleMoney}>￥{item.amount}</Text>
               </View>
-            )
-          })
-        }
+            </View>
+          )}
+          nestedScrollEnabled={false} // 设置为 false
+        />
       </View>
 
       <View>

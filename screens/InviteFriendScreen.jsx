@@ -60,7 +60,7 @@ export default function InviteFriendScreen() {
             </View>
 
 
-            <Text style={styles.title}>邀请规则</Text>
+            {/* <Text style={styles.title}>邀请规则</Text>
             <View style={styles.card}>
                 <Text style={styles.ruleText}>
                     按照规则邀请好友即可获得奖励。
@@ -71,7 +71,7 @@ export default function InviteFriendScreen() {
                     打卡打满40次，系统再赠送10金币
                     2.奖励金币可以用于兑换时间或提升会员等级；
                 </Text>
-            </View>
+            </View> */}
 
             <Text style={styles.title}>邀请好友统计</Text>
             <View style={styles.card}>

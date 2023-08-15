@@ -21,6 +21,7 @@ export default function PersonalCenterScreen() {
         userData: {}
     }); // 用于存储列表数据
     useEffect(() => {
+        NativeModules.AdUtilsModule.showInsert() //展示插屏广告
         initData();
     }, []);
     const copyText = () => {
@@ -97,9 +98,9 @@ export default function PersonalCenterScreen() {
                 <View style={styles.userInfo}>
                     <Text style={styles.userName}>{data.userData.username}</Text>
                     <Text style={styles.invitationCode}>
-                        <Text>邀请码a: {data.userData.invitationCode}</Text>
-                        <TouchableOpacity onPress={copyText}>
-                            <FeatherIcon name="copy" size={20} color="#000" style={styles.copyIcon} />
+                        <Text>邀请码: {data.userData.invitationCode}</Text>
+                        <TouchableOpacity onPress={copyText} style={{marginLeft:3}}>
+                            <FeatherIcon name="copy" size={15} color="#000" style={styles.copyIcon} />
                         </TouchableOpacity>
                     </Text>
                     <Text style={styles.permissions}>
@@ -173,10 +174,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff7e8',
     },
     invitationCode: {
-        flex: 1,
-        //排列方式
+        // flex: 5,
+        // //排列方式
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'right',
         color: '#333',
         fontSize: 16,
     },
@@ -195,7 +196,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         paddingVertical: 16,
         marginBottom: 16
-
     },
     icon: {
         marginHorizontal: 8

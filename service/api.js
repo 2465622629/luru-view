@@ -1,6 +1,6 @@
 import axiosInstance from "../utils/comreqtool";
 //登录
-export async function login(body) {
+export async function UserLogin(body) {
     return await axiosInstance.post("/user/login", body);
 }
 //注册
