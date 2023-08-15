@@ -136,7 +136,7 @@ export default function HomeScreen() {
             let data = await axiosInstance.post('/captcha/getCaptcha')
             setCaptchaImg(data.data.data)
         } catch (e) {
-            alert(e.message)
+            Alert.alert("错误", e.message)
         }
     }
     useEffect(() => {
@@ -191,10 +191,10 @@ export default function HomeScreen() {
             let data = await axiosInstance.post('/user/exchangeTime', dataForm)
             console.log(data);
             if (data.data.success) {
-                alert('兑换成功')
+                Alert.alert("成功", '兑换成功')
                 getUserInfo()
             } else {
-                alert('兑换失败,金币不足')
+                Alert.alert('失败', '兑换失败,金币不足')
             }
         } catch (e) {
             console.log(e.message);
@@ -278,7 +278,7 @@ export default function HomeScreen() {
             const token = await AsyncStorage.getItem('userId');
             // 非空判断
             if (captcha === '') {
-                alert('请输入验证码')
+                Alert.alert("消息", '请输入验证码')
                 return
             }
             //创建一个dataform对象

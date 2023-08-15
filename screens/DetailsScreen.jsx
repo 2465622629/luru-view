@@ -21,7 +21,6 @@ export default function PersonalCenterScreen() {
         userData: {}
     }); // 用于存储列表数据
     useEffect(() => {
-        NativeModules.AdUtilsModule.showInsert() //展示插屏广告
         initData();
     }, []);
     const copyText = () => {
@@ -56,8 +55,8 @@ export default function PersonalCenterScreen() {
     const buttons = [
         { label: "我的团队", name: 'users', onPress: () => navigation.navigate('我的团队') },
         { label: "钱包", name: 'box', onPress: () => navigation.navigate('我的钱包') },
-        { label: "我的订单", name: 'bell', onPress: () => alert("开发中...") },
-        { label: "更多功能尽请期待", name: 'battery-charging', onPress: () => console.log("提现管理") },
+        { label: "我的订单", name: 'bell', onPress: () => Alert.alert("开发中...") },
+        // { label: "更多功能尽请期待", name: 'battery-charging', onPress: () => console.log("提现管理") },
         // { label: "账户余额", name: 'feather', onPress: () => console.log("账户余额") }
     ];
     //录入权限

@@ -62,7 +62,6 @@ export default function PunchScreen() {
       setData({ ...data, punchData: clockData.data });
       Alert.alert("提示", res.message);
       updateCheckIns();
-      Alert.alert("提示", "打卡成功");
       // setIsSuccess(true);
     }
     console.log(e.callBackName);
@@ -173,24 +172,24 @@ export default function PunchScreen() {
           </View>
         </View>
       </View>
-
-      <View style={{ ...styles.card, maxHeight: 200 }}>
+      <View style={{ ...styles.card, maxHeight: 300 }}>
         <Text style={styles.title}>打卡记录</Text>
         <ScrollView
           nestedScrollEnabled
           contentContainerStyle={styles.scrollViewContent}
         >
           {checkIns.map((checkIn, index) => (
-            <Text key={index} style={styles.content}>{checkIn} 打卡成功</Text>
+            <Text key={index} style={{...styles.content,fontSize:13}}>{checkIn} 打卡成功</Text>
           ))}
         </ScrollView>
       </View>
+
 
       <View style={styles.card}>
         <Text style={styles.title}>打卡规则</Text>
         <Text style={styles.content}> 1、严禁使用脚本。</Text>
         <Text style={styles.content}> 2、违规者封号处理，不解释❗️</Text>
-        <Text style={styles.content}> 3、打卡越多奖励越多✅</Text>
+        <Text style={styles.content}> 3、打卡越多奖励积分越多✅</Text>
       </View>
     </ScrollView>
   );
@@ -227,7 +226,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   content: {
-    fontSize: 13,
+    fontSize: 12,
     marginBottom: 3,
   },
   icon: {
