@@ -10,9 +10,7 @@ export default function PunchScreen() {
 
   const [data, setData] = useState({
     userData: {},
-    punchData: {
-      punchCount: 0,
-    },
+    punchData: {},
   });
   const [checkIns, setCheckIns] = useState([]); // 打卡日期
   const navigation = useNavigation();
@@ -78,10 +76,19 @@ export default function PunchScreen() {
       formData.append('userId', token);
       const { data: userinfo } = await getUserInfo(formData)
       const { data: clockData } = await getClockInfo(formData)
+      if (clockData.data == null) {
+        console.log("123");
+        setData({
+          ...data, punchData: {
+            punchCount: 0
+          }, userData: userinfo.data
+        });
+        return;
+      }
       setData({ ...data, punchData: clockData.data, userData: userinfo.data });
     } catch (error) {
       console.log(error.message);
-      alert(error.message);
+      Alert.alert(error.message);
     }
   };
   // 更新打卡日期
@@ -135,6 +142,7 @@ export default function PunchScreen() {
     <ScrollView
       contentContainerStyle={styles.container}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      colors={['#ff0000', '#00ff00', '#0000ff', '#3ad564']}
     >
       <View style={styles.card}>
         <TouchableOpacity onPress={handlePunch}>
@@ -179,7 +187,7 @@ export default function PunchScreen() {
           contentContainerStyle={styles.scrollViewContent}
         >
           {checkIns.map((checkIn, index) => (
-            <Text key={index} style={{...styles.content,fontSize:13}}>{checkIn} 打卡成功</Text>
+            <Text key={index} style={{ ...styles.content, fontSize: 13 }}>{checkIn} 打卡成功</Text>
           ))}
         </ScrollView>
       </View>

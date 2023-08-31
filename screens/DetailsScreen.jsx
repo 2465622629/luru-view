@@ -95,16 +95,22 @@ export default function PersonalCenterScreen() {
                     <Image style={styles.avatar} source={{ uri: data.userData.userAvatar }} />
                 </View>
                 <View style={styles.userInfo}>
-                    <Text style={styles.userName}>{data.userData.username}</Text>
-                    <Text style={styles.invitationCode}>
-                        <Text>邀请码: {data.userData.invitationCode}</Text>
-                        <TouchableOpacity onPress={copyText} style={{marginLeft:3}}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Text style={styles.userName}>
+                            {data.userData.username}
+                        </Text>
+                        <Text style={styles.permissions}>
+                            {permissions()}
+                        </Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop:20 }}>
+                        <Text style={styles.invitationCode}>
+                            邀请码: {data.userData.invitationCode}
+                        </Text>
+                        <TouchableOpacity onPress={copyText} style={{ marginLeft: -70 }}>
                             <FeatherIcon name="copy" size={15} color="#000" style={styles.copyIcon} />
                         </TouchableOpacity>
-                    </Text>
-                    <Text style={styles.permissions}>
-                        {permissions()}
-                    </Text>
+                    </View>
                 </View>
             </View>
 
@@ -156,10 +162,12 @@ const styles = StyleSheet.create({
     avatarContainer: {
         flex: 3,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginLeft: -40,
+        marginRight: 10
     },
     userName: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 8
     },
@@ -171,10 +179,9 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         textAlign: 'center',
         backgroundColor: '#fff7e8',
+        marginRight: 30
     },
     invitationCode: {
-        // flex: 5,
-        // //排列方式
         flexDirection: 'row',
         alignItems: 'right',
         color: '#333',
@@ -187,6 +194,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flex: 1,
         justifyContent: 'center',
+        marginTop: -150
     },
     button: {
         flexDirection: 'row',
@@ -202,7 +210,7 @@ const styles = StyleSheet.create({
     buttonLabel: {
         flex: 1,
         color: '#333',
-        fontSize: 16,
+        fontSize: 14,
         textAlign: 'left',
         marginLeft: 10,
         fontWeight: 'bold'

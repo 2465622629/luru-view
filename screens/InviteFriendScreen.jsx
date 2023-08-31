@@ -34,28 +34,34 @@ export default function InviteFriendScreen() {
 
 
     return (
-        <ScrollView
-            contentContainerStyle={styles.container}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        >
+        // <ScrollView
+        //     contentContainerStyle={styles.container}
+        //     refreshControl={<RefreshControl refreshing={refreshing} 
+        //         onRefresh={onRefresh}
+        //         colors={['#ff0000', '#00ff00', '#0000ff', '#3ad564']}
+        //     />}
 
+        // >
+        <View style={styles.container}>
             <Text style={styles.title}>邀请记录</Text>
 
-            <View style={{ ...styles.card, maxHeight: 300 }}>
+            <View style={{ ...styles.card, maxHeight: 450 }}>
                 <FlatList
-                data={data.invitationList}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                    <View style={styles.friendCard}>
-                        <View>
-                            <Image source={{ uri: item.userAvatar }} style={{ width: 50, height: 50, borderRadius: 30, marginRight: 20 }} />
+                    data={data.invitationList}
+                    keyExtractor={(item, index) => index.toString()}
+                    nestedScrollEnabled={true}
+                    renderItem={({ item }) => (
+                        <View style={styles.friendCard}>
+                            <View>
+                                <Image source={{ uri: item.userAvatar }} style={{ width: 50, height: 50, borderRadius: 30, marginRight: 20 }} />
+                            </View>
+                            <View style={styles.friendInfo}>
+                                <Text style={styles.infoText}>昵称: {item.username}</Text>
+                                <Text style={styles.infoText}>邀请码: {item.invitationCode}</Text>
+                                <Text style={styles.infoText}>注册时间: {item.createdAt}</Text>
+                            </View>
                         </View>
-                        <View style={styles.friendInfo}>
-                            <Text style={styles.infoText}>昵称: {item.username}</Text>
-                            <Text style={styles.infoText}>邀请码: {item.invitationCode}</Text>
-                            <Text style={styles.infoText}>注册时间: {item.createdAt}</Text>
-                        </View></View>
-                )}  
+                    )}
                 />
             </View>
 
@@ -78,7 +84,8 @@ export default function InviteFriendScreen() {
                 <Text style={styles.statText}>邀请总人数: {data.invitationCount}人</Text>
                 <Text style={styles.statText}>已获得奖励: {data.invitationCount * 10}金币</Text>
             </View>
-        </ScrollView>
+        </View>
+        // </ScrollView>
     );
 };
 
@@ -88,7 +95,7 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     title: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 8,
     },
@@ -126,7 +133,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     statText: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold',
         marginBottom: 8,
     },

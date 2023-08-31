@@ -63,7 +63,11 @@ export default function WithdrawScreen() {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      refreshControl={<RefreshControl refreshing={refreshing}
+       onRefresh={onRefresh}
+       nestedScrollEnabled={true}  // Enable nested scrolling
+       colors={['#ff0000', '#00ff00', '#0000ff', '#3ad564']}
+       />}
     >
       <View style={styles.card}>
         <View style={styles.row}>

@@ -337,6 +337,7 @@ export default function HomeScreen() {
                 <RefreshControl
                     refreshing={refreshing}
                     onRefresh={onRefresh}
+                    colors={['#ff0000', '#00ff00', '#0000ff', '#3ad564']}
                 />
             }
         >
